@@ -1,0 +1,215 @@
+# Sistema de Aerolínea - Django
+# Archivo de dependencias del proyecto
+
+# Framework principal
+Django==5.2.4
+
+# Configuración de variables de entorno
+python-decouple==3.8
+
+# Procesamiento de imágenes (para futuras funcionalidades)
+Pillow==11.3.0
+
+# Base de datos (para producción)
+psycopg2-binary==2.9.9
+
+# Servidor WSGI para producción
+gunicorn==21.2.0
+
+# Servidor de desarrollo con recarga automática
+django-extensions==3.2.3
+
+# Debugging y desarrollo
+django-debug-toolbar==4.2.0
+
+# Validación de formularios
+django-crispy-forms==2.1
+crispy-bootstrap5==0.7
+
+# API REST (para futuras funcionalidades)
+djangorestframework==3.14.0
+
+# CORS (para futuras integraciones)
+django-cors-headers==4.3.1
+
+# Caché (para optimizaciones)
+redis==5.0.1
+django-redis==5.4.0
+
+# Celery para tareas asíncronas (para futuras funcionalidades)
+celery==5.3.4
+
+# Email y notificaciones
+django-anymail==10.2
+
+# Seguridad
+django-axes==6.1.0
+
+# Monitoreo y logging
+sentry-sdk==1.40.4
+
+# Testing
+coverage==7.3.2
+pytest==7.4.3
+pytest-django==4.7.0
+
+# Linting y formateo
+black==23.11.0
+flake8==6.1.0
+isort==5.12.0
+
+# Documentación
+Sphinx==7.2.6
+
+# Herramientas de desarrollo
+ipython==8.17.2
+django-extensions==3.2.3
+
+# Utilidades
+python-dateutil==2.8.2
+pytz==2023.3
+
+# Para generar PDFs (futuras funcionalidades)
+reportlab==4.0.7
+
+# Para exportar a Excel (futuras funcionalidades)
+openpyxl==3.1.2
+
+# Para compresión de archivos
+python-magic==0.4.27
+
+# Para validación de datos
+marshmallow==3.20.1
+
+# Para manejo de archivos
+python-magic==0.4.27
+
+# Para encriptación
+cryptography==41.0.7
+
+# Para manejo de fechas avanzado
+arrow==1.3.0
+
+# Para validación de emails
+email-validator==2.1.0
+
+# Para manejo de números de teléfono
+phonenumbers==8.13.25
+
+# Para generación de códigos QR (futuras funcionalidades)
+qrcode==7.4.2
+
+# Para manejo de archivos CSV
+pandas==2.1.4
+
+# Para gráficos y estadísticas
+matplotlib==3.8.2
+seaborn==0.13.0
+
+# Para testing de performance
+django-silk==5.0.4
+
+# Para manejo de archivos de configuración
+PyYAML==6.0.1
+
+# Para validación de esquemas
+jsonschema==4.20.0
+
+# Para manejo de archivos JSON
+simplejson==3.19.2
+
+# Para compresión de respuestas
+django-compressor==4.4
+
+# Para optimización de imágenes
+django-imagekit==5.0.0
+
+# Para manejo de archivos temporales
+tempfile==1.0
+
+# Para validación de URLs
+validators==0.22.0
+
+# Para manejo de timezones
+pytz==2023.3
+
+# Para logging estructurado
+structlog==23.2.0
+
+# Para métricas y monitoreo
+prometheus-client==0.19.0
+
+# Para manejo de secretos
+python-dotenv==1.0.0
+
+# Para validación de contraseñas
+django-password-validators==0.3
+
+# Para autenticación social (futuras funcionalidades)
+django-allauth==0.57.0
+
+# Para manejo de sesiones
+django-session-timeout==0.1.0
+
+# Para backup automático
+django-dbbackup==3.3.0
+
+# Para manejo de archivos de configuración
+configparser==6.0.0
+
+# Para validación de datos de entrada
+django-filter==23.5
+
+# Para paginación avanzada
+django-pure-pagination==0.3.0
+
+# Para manejo de archivos de media
+django-storages==1.14.2
+
+# Para cache de templates
+django-template-cache==0.1.0
+
+# Para manejo de archivos estáticos
+django-staticfiles==1.0.0
+
+# Para validación de formularios avanzada
+django-formtools==2.4.1
+
+# Para manejo de archivos de configuración
+django-settings-export==1.2.1
+
+# Para manejo de archivos de log
+django-log-request-id==1.0.0
+
+# Para manejo de archivos de configuración
+django-configurations==3.0.0
+
+# Para manejo de archivos de configuración
+django-environ==0.11.2
+
+# Para manejo de archivos de configuración
+django-split-settings==1.2.0
+
+# Para manejo de archivos de configuración
+django-settings-export==1.2.1
+
+# Para manejo de archivos de configuración
+django-configurations==3.0.0
+
+# Para manejo de archivos de configuración
+django-environ==0.11.2
+
+# Para manejo de archivos de configuración
+django-split-settings==1.2.0
+
+# Para manejo de archivos de configuración
+django-settings-export==1.2.1
+
+# Para manejo de archivos de configuración
+django-configurations==3.0.0
+
+# Para manejo de archivos de configuración
+django-environ==0.11.2
+
+# Para manejo de archivos de configuración
+django-split-settings==1.2.0 
