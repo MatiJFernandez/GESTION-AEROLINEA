@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ vuelo.origen }} → {{ vuelo.destino }} - Sistema de Aerolínea{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Flight Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'vuelos:home' %}">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'vuelos:lista_vuelos' %}">Vuelos</a></li>
+                    <li class="breadcrumb-item active">{{ vuelo.origen }} → {{ vuelo.destino }}</li>
+                </ol>
+            </nav>
+            
+            <h1 class="fw-bold">
+                <i class="bi bi-airplane text-primary"></i>
+                {{ vuelo.origen }} → {{ vuelo.destino }}
+            </h1>
+            <p class="text-muted">{{ vuelo.avion.modelo }} • {{ vuelo.avion.capacidad }} asientos</p>
+        </div>
+        <div class="col-lg-4 text-end">
+            <span class="badge bg-{% if vuelo.estado == 'programado' %}success{% elif vuelo.estado == 'en_vuelo' %}info{% elif vuelo.estado == 'aterrizado' %}secondary{% else %}danger{% endif %} fs-6">
+                {{ vuelo.get_estado_display }}
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Flight Details -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Detalles del Vuelo</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Salida</small>
+                            <div class="fw-bold">{{ vuelo.fecha_salida|date:"d/m/Y" }}</div>
+                            <div class="text-primary fs-5">{{ vuelo.fecha_salida|date:"H:i" }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Llegada</small>
+                            <div class="fw-bold">{{ vuelo.fecha_llegada|date:"d/m/Y" }}</div>
+                            <div class="text-primary fs-5">{{ vuelo.fecha_llegada|date:"H:i" }}</div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Duración</small>
+                            <div class="fw-bold">{{ vuelo.duracion }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Precio base</small>
+                            <div class="fw-bold text-primary fs-5">${{ vuelo.precio_base }}</div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Avión</small>
+                        <div class="fw-bold">{{ vuelo.avion.modelo }}</div>
+                        <small class="text-muted">Capacidad: {{ vuelo.avion.capacidad }} asientos</small>
+                    </div>
+                    
+                    {% if puede_reservar %}
+                    <div class="d-grid">
+                        <a href="{% url 'reservas:crear_reserva' %}?vuelo_id={{ vuelo.id }}" class="btn btn-primary">
+                            <i class="bi bi-calendar-plus"></i> Reservar Vuelo
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Statistics -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-graph-up"></i> Estadísticas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="fw-bold text-primary">{{ total_asientos }}</div>
+                            <small class="text-muted">Total</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="fw-bold text-success">{{ asientos_disponibles_count }}</div>
+                            <small class="text-muted">Disponibles</small>
+                        </div>
+                        <div class="col-4">
+                            <div class="fw-bold text-danger">{{ asientos_ocupados_count }}</div>
+                            <small class="text-muted">Ocupados</small>
+                        </div>
+                    </div>
+                    <div class="progress mt-3" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: {{ porcentaje_ocupacion }}%"></div>
+                    </div>
+                    <small class="text-muted">Ocupación: {{ porcentaje_ocupacion|floatformat:1 }}%</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seats Map -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-grid-3x3-gap"></i> Mapa de Asientos</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Legend -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="asiento disponible me-2">A1</div>
+                                <small>Disponible</small>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="asiento ocupado me-2">B2</div>
+                                <small>Ocupado</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="asiento reservado me-2">C3</div>
+                                <small>Reservado</small>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="asiento seleccionado me-2">D4</div>
+                                <small>Seleccionado</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seats by Type -->
+                    {% for tipo, asientos in asientos_por_tipo.items %}
+                    <div class="mb-4">
+                        <h6 class="text-{{ tipo|yesno:'success,warning,primary' }}">
+                            {% if tipo == 'primera' %}
+                                <i class="bi bi-star-fill"></i> Primera Clase - ${{ precios_por_tipo.primera }}
+                            {% elif tipo == 'premium' %}
+                                <i class="bi bi-star"></i> Premium - ${{ precios_por_tipo.premium }}
+                            {% else %}
+                                <i class="bi bi-people"></i> Económica - ${{ precios_por_tipo.economica }}
+                            {% endif %}
+                        </h6>
+                        
+                        <div class="seats-container">
+                            {% for asiento in asientos %}
+                            <div class="asiento disponible" 
+                                 data-asiento-id="{{ asiento.id }}"
+                                 data-asiento-numero="{{ asiento.numero }}"
+                                 data-asiento-tipo="{{ asiento.tipo }}"
+                                 data-precio="{{ precios_por_tipo|get_item:asiento.tipo }}"
+                                 onclick="seleccionarAsiento(this)">
+                                {{ asiento.numero }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Selected Seat Info -->
+                    <div id="selected-seat-info" class="alert alert-info" style="display: none;">
+                        <h6><i class="bi bi-check-circle"></i> Asiento Seleccionado</h6>
+                        <div id="seat-details"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reservations List -->
+    {% if reservas_vuelo %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-list-check"></i> Reservas del Vuelo</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Pasajero</th>
+                                    <th>Asiento</th>
+                                    <th>Estado</th>
+                                    <th>Fecha Reserva</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reserva in reservas_vuelo %}
+                                <tr>
+                                    <td><code>{{ reserva.codigo_reserva }}</code></td>
+                                    <td>{{ reserva.pasajero.get_nombre_completo }}</td>
+                                    <td>{{ reserva.asiento.numero }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if reserva.estado == 'confirmada' %}success{% elif reserva.estado == 'pendiente' %}warning{% else %}secondary{% endif %}">
+                                            {{ reserva.get_estado_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ reserva.fecha_reserva|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let asientoSeleccionado = null;
+
+    function seleccionarAsiento(elemento) {
+        // Remover selección anterior
+        if (asientoSeleccionado) {
+            asientoSeleccionado.classList.remove('seleccionado');
+            asientoSeleccionado.classList.add('disponible');
+        }
+
+        // Seleccionar nuevo asiento
+        elemento.classList.remove('disponible');
+        elemento.classList.add('seleccionado');
+        asientoSeleccionado = elemento;
+
+        // Mostrar información del asiento
+        const asientoId = elemento.dataset.asientoId;
+        const asientoNumero = elemento.dataset.asientoNumero;
+        const asientoTipo = elemento.dataset.asientoTipo;
+        const precio = elemento.dataset.precio;
+
+        document.getElementById('seat-details').innerHTML = `
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Número:</strong> ${asientoNumero}
+                </div>
+                <div class="col-md-3">
+                    <strong>Tipo:</strong> ${asientoTipo.charAt(0).toUpperCase() + asientoTipo.slice(1)}
+                </div>
+                <div class="col-md-3">
+                    <strong>Precio:</strong> $${precio}
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'reservas:crear_reserva' %}?vuelo_id={{ vuelo.id }}&asiento_id=${asientoId}" 
+                       class="btn btn-primary btn-sm">
+                        <i class="bi bi-calendar-plus"></i> Reservar
+                    </a>
+                </div>
+            </div>
+        `;
+        document.getElementById('selected-seat-info').style.display = 'block';
+    }
+
+    // Verificar disponibilidad en tiempo real
+    function verificarDisponibilidad(asientoId) {
+        fetch(`/asientos/${asientoId}/disponibilidad/?vuelo_id={{ vuelo.id }}`)
+            .then(response => response.json())
+            .then(data => {
+                const elemento = document.querySelector(`[data-asiento-id="${asientoId}"]`);
+                if (elemento) {
+                    elemento.classList.remove('disponible', 'ocupado', 'reservado');
+                    elemento.classList.add(data.disponible ? 'disponible' : 'ocupado');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+{% endblock %} 
