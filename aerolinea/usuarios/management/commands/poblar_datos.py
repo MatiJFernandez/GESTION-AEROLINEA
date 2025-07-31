@@ -322,5 +322,5 @@ class Command(BaseCommand):
                 )
             
             self.stdout.write(
-                f"  ✅ Reserva creada: {pasajero.get_nombre_completo()} - {vuelo.get_ruta()}"
+                f"  ✅ Reserva creada: {pasajero.get_nombre_completo()} - {vuelo.origen} → {vuelo.destino}"
             ) 

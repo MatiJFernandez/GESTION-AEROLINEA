@@ -125,9 +125,9 @@ def detalle_vuelo(request, vuelo_id):
     
     Incluye información del vuelo, asientos disponibles y opciones de reserva.
     """
-    # Optimización: incluir avión y asientos en una sola consulta
+    # Optimización: incluir avión en una sola consulta
     vuelo = get_object_or_404(
-        Vuelo.objects.select_related('avion').prefetch_related('asientos'),
+        Vuelo.objects.select_related('avion'),
         id=vuelo_id
     )
     
@@ -265,14 +265,35 @@ def buscar_vuelos(request):
         # Búsqueda por GET (parámetros en URL)
         origen = request.GET.get('origen')
         destino = request.GET.get('destino')
-        fecha = request.GET.get('fecha')
+        fecha_desde = request.GET.get('fecha_desde')
+        fecha_hasta = request.GET.get('fecha_hasta')
+        precio_min = request.GET.get('precio_min')
+        precio_max = request.GET.get('precio_max')
+        orden = request.GET.get('orden', 'fecha_salida')
         
+        # Aplicar filtros
         if origen:
             vuelos = vuelos.filter(origen__icontains=origen)
         if destino:
             vuelos = vuelos.filter(destino__icontains=destino)
-        if fecha:
-            vuelos = vuelos.filter(fecha_salida__date=fecha)
+        if fecha_desde:
+            vuelos = vuelos.filter(fecha_salida__date__gte=fecha_desde)
+        if fecha_hasta:
+            vuelos = vuelos.filter(fecha_salida__date__lte=fecha_hasta)
+        if precio_min:
+            vuelos = vuelos.filter(precio_base__gte=precio_min)
+        if precio_max:
+            vuelos = vuelos.filter(precio_base__lte=precio_max)
+        
+        # Ordenamiento
+        if orden == 'precio':
+            vuelos = vuelos.order_by('precio_base')
+        elif orden == 'precio_desc':
+            vuelos = vuelos.order_by('-precio_base')
+        elif orden == 'duracion':
+            vuelos = vuelos.order_by('duracion')
+        else:
+            vuelos = vuelos.order_by('fecha_salida')
         
         # Paginación para resultados
         paginator = Paginator(vuelos, 10)
@@ -283,7 +304,11 @@ def buscar_vuelos(request):
             'vuelos': page_obj,
             'origen': origen,
             'destino': destino,
-            'fecha': fecha,
+            'fecha_desde': fecha_desde,
+            'fecha_hasta': fecha_hasta,
+            'precio_min': precio_min,
+            'precio_max': precio_max,
+            'orden': orden,
             'resultados_encontrados': vuelos.count(),
         }
         
