@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Administrativo - Sistema de Aerolínea{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+    .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    .metric-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    .progress-thin {
+        height: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0">
+                        <i class="bi bi-speedometer2 text-primary"></i> Dashboard Administrativo
+                    </h1>
+                    <p class="text-muted mb-0">{{ hoy|date:"l, d \d\e F \d\e Y" }}</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'vuelos:reporte_pasajeros' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-file-earmark-text"></i> Reportes
+                    </a>
+                    <a href="{% url 'vuelos:estadisticas_ocupacion' %}" class="btn btn-outline-info">
+                        <i class="bi bi-graph-up"></i> Estadísticas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Principales -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm stat-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="metric-value text-primary">{{ vuelos_hoy }}</div>
+                            <div class="metric-label">Vuelos Hoy</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                                <i class="bi bi-airplane text-primary fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm stat-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="metric-value text-success">{{ reservas_hoy }}</div>
+                            <div class="metric-label">Reservas Hoy</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                                <i class="bi bi-calendar-check text-success fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm stat-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="metric-value text-info">{{ ocupacion_porcentaje }}%</div>
+                            <div class="metric-label">Ocupación</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                                <i class="bi bi-people text-info fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress progress-thin mt-2">
+                        <div class="progress-bar bg-info" style="width: {{ ocupacion_porcentaje }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm stat-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="metric-value text-warning">${{ ingresos_mes|floatformat:0 }}</div>
+                            <div class="metric-label">Ingresos Mes</div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                                <i class="bi bi-currency-dollar text-warning fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Gráfico de Ocupación -->
+        <div class="col-xl-8 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up text-primary"></i> Ocupación Últimos 7 Días
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="ocupacionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Destinos Populares -->
+        <div class="col-xl-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-geo-alt text-success"></i> Destinos Populares
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for destino in destinos_populares %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="mb-0">{{ destino.destino }}</h6>
+                            <small class="text-muted">{{ destino.count }} vuelos</small>
+                        </div>
+                        <div class="bg-success bg-opacity-10 rounded px-2 py-1">
+                            <small class="text-success fw-bold">{{ destino.count }}</small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No hay datos disponibles</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Vuelos del Día -->
+        <div class="col-xl-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-event text-primary"></i> Vuelos del Día
+                    </h5>
+                    <span class="badge bg-primary">{{ vuelos_del_dia.count }}</span>
+                </div>
+                <div class="card-body">
+                    {% if vuelos_del_dia %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Ruta</th>
+                                        <th>Hora</th>
+                                        <th>Estado</th>
+                                        <th>Ocupación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for vuelo in vuelos_del_dia %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ vuelo.origen }} → {{ vuelo.destino }}</strong>
+                                            <br><small class="text-muted">{{ vuelo.avion.modelo }}</small>
+                                        </td>
+                                        <td>{{ vuelo.fecha_salida|date:"H:i" }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if vuelo.estado == 'programado' %}success{% elif vuelo.estado == 'en_vuelo' %}info{% else %}secondary{% endif %}">
+                                                {{ vuelo.get_estado_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% with ocupacion=vuelo.reservas.count|div:vuelo.avion.capacidad|mul:100 %}
+                                            <div class="progress progress-thin" style="width: 60px;">
+                                                <div class="progress-bar bg-success" style="width: {{ ocupacion }}%"></div>
+                                            </div>
+                                            <small>{{ ocupacion|floatformat:0 }}%</small>
+                                            {% endwith %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">No hay vuelos programados para hoy</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservas Recientes -->
+        <div class="col-xl-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history text-success"></i> Reservas Recientes
+                    </h5>
+                    <span class="badge bg-success">{{ reservas_recientes.count }}</span>
+                </div>
+                <div class="card-body">
+                    {% if reservas_recientes %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Pasajero</th>
+                                        <th>Vuelo</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reserva in reservas_recientes %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ reserva.pasajero.get_nombre_completo }}</strong>
+                                            <br><small class="text-muted">{{ reserva.pasajero.email }}</small>
+                                        </td>
+                                        <td>
+                                            {{ reserva.vuelo.origen }} → {{ reserva.vuelo.destino }}
+                                            <br><small class="text-muted">{{ reserva.asiento.numero }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{% if reserva.estado == 'confirmada' %}success{% elif reserva.estado == 'pendiente' %}warning{% else %}secondary{% endif %}">
+                                                {{ reserva.get_estado_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small>{{ reserva.fecha_reserva|date:"d/m H:i" }}</small>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">No hay reservas recientes</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Gráfico de ocupación
+    const ctx = document.getElementById('ocupacionChart').getContext('2d');
+    const ocupacionData = {{ ocupacion_por_dia|safe }};
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ocupacionData.map(item => item.fecha),
+            datasets: [{
+                label: 'Ocupación (%)',
+                data: ocupacionData.map(item => item.ocupacion),
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Actualizar estadísticas en tiempo real
+    function actualizarEstadisticas() {
+        fetch('{% url "vuelos:api_estadisticas" %}')
+            .then(response => response.json())
+            .then(data => {
+                // Actualizar métricas en tiempo real si es necesario
+                console.log('Estadísticas actualizadas:', data);
+            })
+            .catch(error => console.error('Error actualizando estadísticas:', error));
+    }
+
+    // Actualizar cada 5 minutos
+    setInterval(actualizarEstadisticas, 300000);
+</script>
+{% endblock %} 
