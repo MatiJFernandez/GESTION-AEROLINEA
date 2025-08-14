@@ -6,6 +6,8 @@ Este archivo contiene todas las vistas relacionadas con:
 - Gestión de vuelos
 - Gestión de aviones
 - Gestión de asientos
+
+Implementa el patrón Vista-Servicio-Repositorio.
 """
 
 from django.shortcuts import render, get_object_or_404
@@ -14,19 +16,22 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from usuarios.decorators import staff_required, active_flight_required
 from .models import Vuelo, Avion, Asiento
+from .services.vuelos import VueloService, AvionService, AsientoService
 
-# Create your views here.
+# Inicializar servicios
+vuelo_service = VueloService()
+avion_service = AvionService()
+asiento_service = AsientoService()
 
 def home(request):
     """
     Vista para la página principal del sitio.
     
     Muestra información general de la aerolínea y vuelos destacados.
+    Implementa el patrón Vista-Servicio-Repositorio.
     """
-    # Obtener vuelos próximos (próximos 7 días) con optimización
-    vuelos_proximos = Vuelo.objects.select_related('avion').filter(
-        estado='programado'
-    ).order_by('fecha_salida')[:5]
+    # Usar servicios para obtener datos
+    vuelos_proximos = vuelo_service.buscar_vuelos_disponibles()[:5]
     
     # Obtener estadísticas básicas
     total_vuelos = Vuelo.objects.count()
@@ -180,9 +185,10 @@ def detalle_vuelo(request, vuelo_id):
     )
     
     # Obtener información de precios por tipo de asiento
+    from decimal import Decimal
     precios_por_tipo = {
-        'primera': vuelo.precio_base * 2.5,  # 150% más caro
-        'premium': vuelo.precio_base * 1.8,  # 80% más caro
+        'primera': vuelo.precio_base * Decimal('2.5'),  # 150% más caro
+        'premium': vuelo.precio_base * Decimal('1.8'),  # 80% más caro
         'economica': vuelo.precio_base,      # Precio base
     }
     
@@ -407,9 +413,10 @@ def verificar_disponibilidad(request, asiento_id):
     if vuelo_id:
         try:
             vuelo = Vuelo.objects.get(id=vuelo_id)
+            from decimal import Decimal
             precios_por_tipo = {
-                'primera': vuelo.precio_base * 2.5,
-                'premium': vuelo.precio_base * 1.8,
+                'primera': vuelo.precio_base * Decimal('2.5'),
+                'premium': vuelo.precio_base * Decimal('1.8'),
                 'economica': vuelo.precio_base,
             }
             precio_asiento = precios_por_tipo.get(asiento.tipo, vuelo.precio_base)
@@ -433,3 +440,19 @@ def verificar_disponibilidad(request, asiento_id):
     }
     
     return JsonResponse(data)
+
+
+def test_translation(request):
+    """
+    Vista para probar las traducciones del sistema.
+    
+    Muestra diferentes textos traducidos y permite cambiar el idioma.
+    """
+    from django.utils import timezone
+    
+    context = {
+        'current_date': timezone.now().date(),
+        'current_time': timezone.now().time(),
+    }
+    
+    return render(request, 'test_translation.html', context)

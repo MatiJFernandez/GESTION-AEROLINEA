@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de Reserva - Sistema de Aerolínea{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-ticket-detailed"></i> Detalle de Reserva
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <!-- Código de reserva -->
+                    <div class="alert alert-success">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-check-circle"></i> Reserva Confirmada
+                        </h5>
+                        <p class="mb-0">
+                            <strong>Código de Reserva:</strong> {{ reserva.codigo_reserva }}
+                        </p>
+                    </div>
+                    
+                    <!-- Información del vuelo -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="bi bi-airplane"></i> Información del Vuelo
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Origen:</strong> {{ reserva.vuelo.origen }}</p>
+                                    <p><strong>Destino:</strong> {{ reserva.vuelo.destino }}</p>
+                                    <p><strong>Fecha:</strong> {{ reserva.vuelo.fecha_salida|date:"d/m/Y" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Hora:</strong> {{ reserva.vuelo.fecha_salida|date:"H:i" }}</p>
+                                    <p><strong>Avión:</strong> {{ reserva.vuelo.avion.modelo }}</p>
+                                    <p><strong>Precio:</strong> ${{ reserva.precio }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Información del pasajero -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="bi bi-person"></i> Información del Pasajero
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Nombre:</strong> {{ reserva.pasajero.get_nombre_completo }}</p>
+                                    <p><strong>Email:</strong> {{ reserva.pasajero.email }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Teléfono:</strong> {{ reserva.pasajero.telefono|default:"No especificado" }}</p>
+                                    <p><strong>DNI:</strong> {{ reserva.pasajero.dni }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Información del asiento -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="bi bi-grid-3x3-gap"></i> Información del Asiento
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Número de Asiento:</strong> {{ reserva.asiento.numero }}</p>
+                            <p><strong>Estado:</strong> 
+                                <span class="badge bg-success">Reservado</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Estado de la reserva -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="bi bi-flag"></i> Estado de la Reserva
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Estado:</strong> 
+                                        <span class="badge bg-{% if reserva.estado == 'confirmada' %}success{% elif reserva.estado == 'pendiente' %}warning{% else %}secondary{% endif %}">
+                                            {% if reserva.estado == 'confirmada' %}
+                                                Confirmada
+                                            {% elif reserva.estado == 'pendiente' %}
+                                                Pendiente
+                                            {% elif reserva.estado == 'cancelada' %}
+                                                Cancelada
+                                            {% elif reserva.estado == 'completada' %}
+                                                Completada
+                                            {% elif reserva.estado == 'expirada' %}
+                                                Expirada
+                                            {% else %}
+                                                {{ reserva.estado|title }}
+                                            {% endif %}
+                                        </span>
+                                    </p>
+                                    <p><strong>Fecha de Reserva:</strong> {{ reserva.fecha_reserva|date:"d/m/Y H:i" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Fecha de Vencimiento:</strong> {{ reserva.fecha_vencimiento|date:"d/m/Y H:i" }}</p>
+                                    {% if reserva.observaciones %}
+                                    <p><strong>Observaciones:</strong> {{ reserva.observaciones }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Acciones -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'vuelos:home' %}" class="btn btn-secondary">
+                            <i class="bi bi-house"></i> Volver al Inicio
+                        </a>
+                        
+                        <div class="btn-group">
+                            {% if reserva.estado == 'pendiente' %}
+                                <a href="{% url 'reservas:confirmar_reserva' reserva.id %}" 
+                                   class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Confirmar
+                                </a>
+                            {% endif %}
+                            
+                            {% if reserva.estado in 'pendiente,confirmada' %}
+                                <a href="{% url 'reservas:cancelar_reserva' reserva.id %}" 
+                                   class="btn btn-danger">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                            {% endif %}
+                            
+                            <a href="{% url 'reservas:editar_reserva' reserva.id %}" 
+                               class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

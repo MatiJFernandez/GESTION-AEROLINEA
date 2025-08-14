@@ -1,380 +1,398 @@
 """
-Vistas administrativas para reportes y dashboard.
+Vistas personalizadas para el admin de Django.
 
-Este módivo contiene vistas específicas para:
-- Dashboard administrativo
-- Reportes de pasajeros por vuelo
-- Estadísticas de ocupación
-- Exportación de datos
+Este archivo contiene vistas que se integran con el admin de Django
+para proporcionar funcionalidades adicionales como dashboards,
+estadísticas y reportes.
 """
 
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, JsonResponse
-from django.db.models import Count, Q, Avg, Sum
+from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Count, Q, Sum
 from django.utils import timezone
-from django.core.paginator import Paginator
 from datetime import datetime, timedelta
-import csv
+from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 import json
 
-from usuarios.decorators import staff_required
 from .models import Vuelo, Avion, Asiento
 from reservas.models import Reserva, Boleto
 from pasajeros.models import Pasajero
+from usuarios.models import Usuario
 
 
-@staff_required
+@staff_member_required
 def dashboard_admin(request):
     """
-    Dashboard administrativo con estadísticas generales.
+    Dashboard principal del admin con estadísticas del sistema.
     
     Muestra:
-    - Estadísticas de ocupación
-    - Vuelos del día
-    - Reservas recientes
-    - Métricas clave
+    - Resumen de vuelos, reservas, pasajeros
+    - Gráficos de ocupación
+    - Alertas y notificaciones
     """
-    today = timezone.now().date()
     
-    # Estadísticas generales
+    # Obtener estadísticas generales
     total_vuelos = Vuelo.objects.count()
-    vuelos_hoy = Vuelo.objects.filter(fecha_salida__date=today).count()
-    vuelos_programados = Vuelo.objects.filter(estado='programado').count()
+    vuelos_activos = Vuelo.objects.filter(estado='programado').count()
+    vuelos_en_vuelo = Vuelo.objects.filter(estado='en_vuelo').count()
+    vuelos_completados = Vuelo.objects.filter(estado='aterrizado').count()
     
-    # Estadísticas de reservas
     total_reservas = Reserva.objects.count()
-    reservas_hoy = Reserva.objects.filter(fecha_reserva__date=today).count()
     reservas_pendientes = Reserva.objects.filter(estado='pendiente').count()
     reservas_confirmadas = Reserva.objects.filter(estado='confirmada').count()
     
-    # Estadísticas de ocupación
-    total_asientos = Asiento.objects.count()
-    asientos_ocupados = Asiento.objects.filter(estado='ocupado').count()
-    asientos_disponibles = Asiento.objects.filter(estado='disponible').count()
+    total_pasajeros = Pasajero.objects.count()
+    total_usuarios = Usuario.objects.count()
     
-    # Calcular porcentaje de ocupación
-    ocupacion_porcentaje = (asientos_ocupados / total_asientos * 100) if total_asientos > 0 else 0
+    # Estadísticas de aviones
+    total_aviones = Avion.objects.count()
+    aviones_activos = Avion.objects.filter(estado='activo').count()
+    aviones_mantenimiento = Avion.objects.filter(estado='mantenimiento').count()
     
-    # Vuelos del día
-    vuelos_del_dia = Vuelo.objects.filter(
-        fecha_salida__date=today
-    ).select_related('avion').order_by('fecha_salida')
+    # Ocupación de vuelos próximos
+    vuelos_proximos = Vuelo.objects.filter(
+        fecha_salida__gte=timezone.now(),
+        estado='programado'
+    ).order_by('fecha_salida')[:10]
     
-    # Reservas recientes (últimas 10)
-    reservas_recientes = Reserva.objects.select_related(
-        'vuelo', 'pasajero', 'asiento'
-    ).order_by('-fecha_reserva')[:10]
+    # Calcular ocupación para cada vuelo próximo
+    for vuelo in vuelos_proximos:
+        asientos_ocupados = Reserva.objects.filter(
+            vuelo=vuelo,
+            estado__in=['confirmada', 'completada']
+        ).count()
+        vuelo.ocupacion_porcentaje = (asientos_ocupados / vuelo.avion.capacidad) * 100 if vuelo.avion.capacidad > 0 else 0
+        vuelo.asientos_ocupados = asientos_ocupados
+        vuelo.asientos_disponibles = vuelo.avion.capacidad - asientos_ocupados
     
-    # Estadísticas por destino (top 5)
-    destinos_populares = Vuelo.objects.values('destino').annotate(
-        count=Count('id')
-    ).order_by('-count')[:5]
+    # Alertas del sistema
+    alertas = []
     
-    # Estadísticas de ingresos (últimos 30 días)
-    fecha_limite = today - timedelta(days=30)
-    ingresos_mes = Reserva.objects.filter(
-        fecha_reserva__date__gte=fecha_limite,
-        estado='confirmada'
-    ).aggregate(total=Sum('precio'))['total'] or 0
+    # Vuelos con poca ocupación
+    vuelos_baja_ocupacion = []
+    for vuelo in vuelos_proximos:
+        if vuelo.ocupacion_porcentaje < 30 and vuelo.fecha_salida.date() <= (timezone.now().date() + timedelta(days=7)):
+            vuelos_baja_ocupacion.append(vuelo)
     
-    # Gráfico de ocupación por día (últimos 7 días)
-    ocupacion_por_dia = []
-    for i in range(7):
-        fecha = today - timedelta(days=i)
-        vuelos_dia = Vuelo.objects.filter(fecha_salida__date=fecha)
-        total_asientos_dia = sum(vuelo.avion.capacidad for vuelo in vuelos_dia)
-        asientos_ocupados_dia = sum(
-            vuelo.reservas.filter(estado='confirmada').count() 
-            for vuelo in vuelos_dia
-        )
-        ocupacion_porcentaje_dia = (
-            asientos_ocupados_dia / total_asientos_dia * 100
-        ) if total_asientos_dia > 0 else 0
-        
-        ocupacion_por_dia.append({
-            'fecha': fecha.strftime('%d/%m'),
-            'ocupacion': round(ocupacion_porcentaje_dia, 1)
+    if vuelos_baja_ocupacion:
+        alertas.append({
+            'tipo': 'warning',
+            'mensaje': f'{len(vuelos_baja_ocupacion)} vuelos próximos tienen baja ocupación (< 30%)',
+            'vuelos': vuelos_baja_ocupacion
         })
     
-    ocupacion_por_dia.reverse()  # Ordenar cronológicamente
+    # Aviones en mantenimiento
+    if aviones_mantenimiento > 0:
+        alertas.append({
+            'tipo': 'info',
+            'mensaje': f'{aviones_mantenimiento} aviones están en mantenimiento',
+            'aviones': Avion.objects.filter(estado='mantenimiento')
+        })
+    
+    # Reservas pendientes de pago
+    if reservas_pendientes > 0:
+        alertas.append({
+            'tipo': 'warning',
+            'mensaje': f'{reservas_pendientes} reservas están pendientes de pago',
+            'reservas': Reserva.objects.filter(estado='pendiente')[:5]
+        })
     
     context = {
-        # Estadísticas generales
         'total_vuelos': total_vuelos,
-        'vuelos_hoy': vuelos_hoy,
-        'vuelos_programados': vuelos_programados,
+        'vuelos_activos': vuelos_activos,
+        'vuelos_en_vuelo': vuelos_en_vuelo,
+        'vuelos_completados': vuelos_completados,
         'total_reservas': total_reservas,
-        'reservas_hoy': reservas_hoy,
         'reservas_pendientes': reservas_pendientes,
         'reservas_confirmadas': reservas_confirmadas,
-        
-        # Estadísticas de ocupación
-        'total_asientos': total_asientos,
-        'asientos_ocupados': asientos_ocupados,
-        'asientos_disponibles': asientos_disponibles,
-        'ocupacion_porcentaje': round(ocupacion_porcentaje, 1),
-        
-        # Datos para listas
-        'vuelos_del_dia': vuelos_del_dia,
-        'reservas_recientes': reservas_recientes,
-        'destinos_populares': destinos_populares,
-        
-        # Métricas financieras
-        'ingresos_mes': ingresos_mes,
-        
-        # Datos para gráficos
-        'ocupacion_por_dia': json.dumps(ocupacion_por_dia),
-        
-        # Fecha actual
-        'hoy': today,
+        'total_pasajeros': total_pasajeros,
+        'total_usuarios': total_usuarios,
+        'total_aviones': total_aviones,
+        'aviones_activos': aviones_activos,
+        'aviones_mantenimiento': aviones_mantenimiento,
+        'vuelos_proximos': vuelos_proximos,
+        'alertas': alertas,
     }
     
     return render(request, 'admin/dashboard.html', context)
 
 
-@staff_required
-def reporte_pasajeros_vuelo(request):
-    """
-    Reporte de pasajeros por vuelo con filtros.
-    
-    Permite:
-    - Filtrar por fecha, destino, estado
-    - Ver detalles de pasajeros
-    - Exportar a CSV
-    """
-    # Obtener parámetros de filtro
-    fecha_desde = request.GET.get('fecha_desde')
-    fecha_hasta = request.GET.get('fecha_hasta')
-    destino = request.GET.get('destino')
-    estado = request.GET.get('estado')
-    exportar = request.GET.get('exportar')
-    
-    # Query base
-    vuelos = Vuelo.objects.select_related('avion').prefetch_related(
-        'reservas__pasajero',
-        'reservas__asiento'
-    ).order_by('fecha_salida')
-    
-    # Aplicar filtros
-    if fecha_desde:
-        vuelos = vuelos.filter(fecha_salida__date__gte=fecha_desde)
-    if fecha_hasta:
-        vuelos = vuelos.filter(fecha_salida__date__lte=fecha_hasta)
-    if destino:
-        vuelos = vuelos.filter(destino__icontains=destino)
-    if estado:
-        vuelos = vuelos.filter(estado=estado)
-    
-    # Calcular estadísticas por vuelo
-    vuelos_con_pasajeros = []
-    for vuelo in vuelos:
-        reservas_confirmadas = vuelo.reservas.filter(estado='confirmada')
-        reservas_pendientes = vuelo.reservas.filter(estado='pendiente')
-        
-        vuelos_con_pasajeros.append({
-            'vuelo': vuelo,
-            'total_pasajeros': reservas_confirmadas.count(),
-            'pasajeros_pendientes': reservas_pendientes.count(),
-            'ocupacion_porcentaje': (
-                reservas_confirmadas.count() / vuelo.avion.capacidad * 100
-            ) if vuelo.avion.capacidad > 0 else 0,
-            'reservas_confirmadas': reservas_confirmadas,
-            'reservas_pendientes': reservas_pendientes,
-        })
-    
-    # Paginación
-    paginator = Paginator(vuelos_con_pasajeros, 20)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    # Exportar a CSV si se solicita
-    if exportar == 'csv':
-        return exportar_pasajeros_csv(vuelos_con_pasajeros)
-    
-    context = {
-        'page_obj': page_obj,
-        'vuelos_con_pasajeros': page_obj,
-        'fecha_desde': fecha_desde,
-        'fecha_hasta': fecha_hasta,
-        'destino': destino,
-        'estado': estado,
-        'total_vuelos': len(vuelos_con_pasajeros),
-    }
-    
-    return render(request, 'admin/reporte_pasajeros.html', context)
-
-
-@staff_required
-def detalle_pasajeros_vuelo(request, vuelo_id):
-    """
-    Vista detallada de pasajeros para un vuelo específico.
-    """
-    vuelo = get_object_or_404(Vuelo, id=vuelo_id)
-    
-    # Obtener todas las reservas del vuelo
-    reservas = vuelo.reservas.select_related(
-        'pasajero', 'asiento'
-    ).order_by('asiento__numero')
-    
-    # Agrupar por estado
-    reservas_confirmadas = reservas.filter(estado='confirmada')
-    reservas_pendientes = reservas.filter(estado='pendiente')
-    reservas_canceladas = reservas.filter(estado='cancelada')
-    
-    # Estadísticas
-    total_reservas = reservas.count()
-    ocupacion_porcentaje = (
-        reservas_confirmadas.count() / vuelo.avion.capacidad * 100
-    ) if vuelo.avion.capacidad > 0 else 0
-    
-    context = {
-        'vuelo': vuelo,
-        'reservas_confirmadas': reservas_confirmadas,
-        'reservas_pendientes': reservas_pendientes,
-        'reservas_canceladas': reservas_canceladas,
-        'total_reservas': total_reservas,
-        'ocupacion_porcentaje': round(ocupacion_porcentaje, 1),
-    }
-    
-    return render(request, 'admin/detalle_pasajeros_vuelo.html', context)
-
-
-@staff_required
+@staff_member_required
 def estadisticas_ocupacion(request):
     """
-    Estadísticas detalladas de ocupación.
+    Vista para mostrar estadísticas detalladas de ocupación de vuelos.
+    
+    Incluye:
+    - Gráficos de ocupación por ruta
+    - Tendencias temporales
+    - Análisis de rentabilidad
     """
-    # Obtener parámetros
-    periodo = request.GET.get('periodo', '7')  # días
-    fecha_desde = request.GET.get('fecha_desde')
-    fecha_hasta = request.GET.get('fecha_hasta')
     
-    # Calcular fechas
-    if fecha_desde and fecha_hasta:
-        fecha_inicio = datetime.strptime(fecha_desde, '%Y-%m-%d').date()
-        fecha_fin = datetime.strptime(fecha_hasta, '%Y-%m-%d').date()
-    else:
-        fecha_fin = timezone.now().date()
-        fecha_inicio = fecha_fin - timedelta(days=int(periodo))
+    # Obtener vuelos del último mes
+    fecha_inicio = timezone.now() - timedelta(days=30)
+    vuelos_recientes = Vuelo.objects.filter(
+        fecha_salida__gte=fecha_inicio
+    ).order_by('fecha_salida')
     
-    # Obtener vuelos en el período
-    vuelos_periodo = Vuelo.objects.filter(
-        fecha_salida__date__range=[fecha_inicio, fecha_fin]
-    ).select_related('avion')
-    
-    # Calcular estadísticas diarias
-    estadisticas_diarias = []
-    for fecha in (fecha_inicio + timedelta(n) for n in range((fecha_fin - fecha_inicio).days + 1)):
-        vuelos_dia = vuelos_periodo.filter(fecha_salida__date=fecha)
+    # Estadísticas por ruta
+    estadisticas_rutas = {}
+    for vuelo in vuelos_recientes:
+        ruta = f"{vuelo.origen} → {vuelo.destino}"
         
-        total_asientos = sum(vuelo.avion.capacidad for vuelo in vuelos_dia)
-        asientos_ocupados = sum(
-            vuelo.reservas.filter(estado='confirmada').count() 
-            for vuelo in vuelos_dia
-        )
-        
-        ocupacion_porcentaje = (
-            asientos_ocupados / total_asientos * 100
-        ) if total_asientos > 0 else 0
-        
-        estadisticas_diarias.append({
-            'fecha': fecha,
-            'vuelos': vuelos_dia.count(),
-            'total_asientos': total_asientos,
-            'asientos_ocupados': asientos_ocupados,
-            'ocupacion_porcentaje': round(ocupacion_porcentaje, 1),
-        })
-    
-    # Estadísticas por destino
-    destinos_stats = {}
-    for vuelo in vuelos_periodo:
-        destino = vuelo.destino
-        if destino not in destinos_stats:
-            destinos_stats[destino] = {
-                'vuelos': 0,
+        if ruta not in estadisticas_rutas:
+            estadisticas_rutas[ruta] = {
+                'total_vuelos': 0,
                 'total_asientos': 0,
                 'asientos_ocupados': 0,
+                'ingresos_totales': 0,
+                'ocupacion_promedio': 0
             }
         
-        destinos_stats[destino]['vuelos'] += 1
-        destinos_stats[destino]['total_asientos'] += vuelo.avion.capacidad
-        destinos_stats[destino]['asientos_ocupados'] += vuelo.reservas.filter(estado='confirmada').count()
+        estadisticas_rutas[ruta]['total_vuelos'] += 1
+        estadisticas_rutas[ruta]['total_asientos'] += vuelo.avion.capacidad
+        
+        # Calcular asientos ocupados
+        asientos_ocupados = Reserva.objects.filter(
+            vuelo=vuelo,
+            estado__in=['confirmada', 'completada']
+        ).count()
+        estadisticas_rutas[ruta]['asientos_ocupados'] += asientos_ocupados
+        
+        # Calcular ingresos
+        ingresos_vuelo = Reserva.objects.filter(
+            vuelo=vuelo,
+            estado__in=['confirmada', 'completada']
+        ).aggregate(total=Sum('precio'))['total'] or 0
+        estadisticas_rutas[ruta]['ingresos_totales'] += ingresos_vuelo
     
-    # Calcular porcentajes por destino
-    for destino, stats in destinos_stats.items():
-        stats['ocupacion_porcentaje'] = (
-            stats['asientos_ocupados'] / stats['total_asientos'] * 100
-        ) if stats['total_asientos'] > 0 else 0
+    # Calcular ocupación promedio por ruta
+    for ruta, stats in estadisticas_rutas.items():
+        if stats['total_asientos'] > 0:
+            stats['ocupacion_promedio'] = (stats['asientos_ocupados'] / stats['total_asientos']) * 100
+    
+    # Ordenar rutas por ocupación
+    rutas_ordenadas = sorted(
+        estadisticas_rutas.items(),
+        key=lambda x: x[1]['ocupacion_promedio'],
+        reverse=True
+    )
+    
+    # Estadísticas temporales (últimos 7 días)
+    ultimos_7_dias = []
+    for i in range(7):
+        fecha = timezone.now().date() - timedelta(days=i)
+        vuelos_dia = Vuelo.objects.filter(fecha_salida__date=fecha)
+        
+        total_asientos = sum(v.avion.capacidad for v in vuelos_dia)
+        asientos_ocupados = sum(
+            Reserva.objects.filter(
+                vuelo=v,
+                estado__in=['confirmada', 'completada']
+            ).count() for v in vuelos_dia
+        )
+        
+        ocupacion = (asientos_ocupados / total_asientos * 100) if total_asientos > 0 else 0
+        
+        ultimos_7_dias.append({
+            'fecha': fecha,
+            'ocupacion': round(ocupacion, 1),
+            'total_vuelos': vuelos_dia.count()
+        })
+    
+    ultimos_7_dias.reverse()  # Ordenar cronológicamente
     
     context = {
-        'estadisticas_diarias': estadisticas_diarias,
-        'destinos_stats': destinos_stats,
+        'estadisticas_rutas': rutas_ordenadas,
+        'ultimos_7_dias': ultimos_7_dias,
         'fecha_inicio': fecha_inicio,
-        'fecha_fin': fecha_fin,
-        'periodo': periodo,
+        'fecha_fin': timezone.now().date(),
     }
     
     return render(request, 'admin/estadisticas_ocupacion.html', context)
 
 
-def exportar_pasajeros_csv(vuelos_con_pasajeros):
+@staff_member_required
+def reporte_pasajeros(request):
     """
-    Exportar reporte de pasajeros a CSV.
+    Vista para generar reportes de pasajeros.
+    
+    Incluye:
+    - Lista de pasajeros por vuelo
+    - Estadísticas de pasajeros frecuentes
+    - Análisis de preferencias
     """
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="pasajeros_vuelos_{timezone.now().strftime("%Y%m%d")}.csv"'
     
-    writer = csv.writer(response)
-    writer.writerow([
-        'Vuelo', 'Origen', 'Destino', 'Fecha Salida', 'Avión', 'Capacidad',
-        'Pasajeros Confirmados', 'Pasajeros Pendientes', 'Ocupación %'
-    ])
+    # Obtener vuelos próximos
+    vuelos_proximos = Vuelo.objects.filter(
+        fecha_salida__gte=timezone.now(),
+        estado='programado'
+    ).order_by('fecha_salida')
     
-    for item in vuelos_con_pasajeros:
-        vuelo = item['vuelo']
-        writer.writerow([
-            vuelo.id,
-            vuelo.origen,
-            vuelo.destino,
-            vuelo.fecha_salida.strftime('%d/%m/%Y %H:%M'),
-            vuelo.avion.modelo,
-            vuelo.avion.capacidad,
-            item['total_pasajeros'],
-            item['pasajeros_pendientes'],
-            f"{item['ocupacion_porcentaje']:.1f}%"
-        ])
+    # Agrupar pasajeros por vuelo
+    pasajeros_por_vuelo = {}
+    for vuelo in vuelos_proximos:
+        reservas = Reserva.objects.filter(
+            vuelo=vuelo,
+            estado__in=['confirmada', 'completada']
+        ).select_related('pasajero')
+        
+        pasajeros_por_vuelo[vuelo] = {
+            'reservas': reservas,
+            'total_pasajeros': reservas.count(),
+            'asientos_disponibles': vuelo.avion.capacidad - reservas.count()
+        }
     
-    return response
-
-
-@staff_required
-def api_estadisticas(request):
-    """
-    API para obtener estadísticas en formato JSON.
-    """
-    today = timezone.now().date()
+    # Pasajeros más frecuentes
+    pasajeros_frecuentes = Pasajero.objects.annotate(
+        total_reservas=Count('reservas')
+    ).filter(
+        total_reservas__gt=0
+    ).order_by('-total_reservas')[:10]
     
-    # Estadísticas básicas
-    stats = {
-        'vuelos_hoy': Vuelo.objects.filter(fecha_salida__date=today).count(),
-        'reservas_hoy': Reserva.objects.filter(fecha_reserva__date=today).count(),
-        'ocupacion_porcentaje': 0,
-        'ingresos_hoy': 0,
+    # Estadísticas por tipo de asiento
+    estadisticas_asientos = {}
+    for vuelo in vuelos_proximos:
+        reservas = Reserva.objects.filter(
+            vuelo=vuelo,
+            estado__in=['confirmada', 'completada']
+        ).select_related('asiento')
+        
+        for reserva in reservas:
+            tipo_asiento = reserva.asiento.tipo
+            if tipo_asiento not in estadisticas_asientos:
+                estadisticas_asientos[tipo_asiento] = 0
+            estadisticas_asientos[tipo_asiento] += 1
+    
+    context = {
+        'pasajeros_por_vuelo': pasajeros_por_vuelo,
+        'pasajeros_frecuentes': pasajeros_frecuentes,
+        'estadisticas_asientos': estadisticas_asientos,
     }
     
-    # Calcular ocupación
-    total_asientos = Asiento.objects.count()
-    asientos_ocupados = Asiento.objects.filter(estado='ocupado').count()
-    if total_asientos > 0:
-        stats['ocupacion_porcentaje'] = round(asientos_ocupados / total_asientos * 100, 1)
+    return render(request, 'admin/reporte_pasajeros.html', context)
+
+
+@staff_member_required
+def detalle_pasajeros_vuelo(request, vuelo_id):
+    """
+    Vista para mostrar el detalle de pasajeros de un vuelo específico.
     
-    # Calcular ingresos del día
-    ingresos_hoy = Reserva.objects.filter(
-        fecha_reserva__date=today,
-        estado='confirmada'
-    ).aggregate(total=Sum('precio'))['total'] or 0
-    stats['ingresos_hoy'] = ingresos_hoy
+    Args:
+        vuelo_id: ID del vuelo
+    """
     
-    return JsonResponse(stats) 
+    try:
+        vuelo = Vuelo.objects.get(id=vuelo_id)
+    except Vuelo.DoesNotExist:
+        messages.error(request, 'Vuelo no encontrado')
+        return redirect('admin:vuelos_vuelo_changelist')
+    
+    # Obtener reservas confirmadas
+    reservas = Reserva.objects.filter(
+        vuelo=vuelo,
+        estado__in=['confirmada', 'completada']
+    ).select_related('pasajero', 'asiento').order_by('asiento__fila', 'asiento__columna')
+    
+    # Agrupar por fila para mostrar en formato de avión
+    asientos_por_fila = {}
+    for reserva in reservas:
+        fila = reserva.asiento.fila
+        if fila not in asientos_por_fila:
+            asientos_por_fila[fila] = {}
+        asientos_por_fila[fila][reserva.asiento.columna] = reserva
+    
+    # Obtener configuración del avión
+    avion = vuelo.avion
+    asientos_disponibles = avion.capacidad - reservas.count()
+    
+    context = {
+        'vuelo': vuelo,
+        'avion': avion,
+        'reservas': reservas,
+        'asientos_por_fila': asientos_por_fila,
+        'asientos_disponibles': asientos_disponibles,
+        'ocupacion_porcentaje': (reservas.count() / avion.capacidad) * 100 if avion.capacidad > 0 else 0,
+    }
+    
+    return render(request, 'admin/detalle_pasajeros_vuelo.html', context)
+
+
+# API endpoints para AJAX
+@staff_member_required
+@require_http_methods(["GET"])
+def api_estadisticas_vuelos(request):
+    """
+    API endpoint para obtener estadísticas de vuelos en tiempo real.
+    """
+    
+    # Estadísticas básicas
+    total_vuelos = Vuelo.objects.count()
+    vuelos_activos = Vuelo.objects.filter(estado='programado').count()
+    vuelos_en_vuelo = Vuelo.objects.filter(estado='en_vuelo').count()
+    
+    # Ocupación actual
+    vuelos_proximos = Vuelo.objects.filter(
+        fecha_salida__gte=timezone.now(),
+        estado='programado'
+    )[:5]
+    
+    ocupacion_vuelos = []
+    for vuelo in vuelos_proximos:
+        asientos_ocupados = Reserva.objects.filter(
+            vuelo=vuelo,
+            estado__in=['confirmada', 'completada']
+        ).count()
+        
+        ocupacion_vuelos.append({
+            'id': vuelo.id,
+            'origen': vuelo.origen,
+            'destino': vuelo.destino,
+            'fecha_salida': vuelo.fecha_salida.strftime('%d/%m/%Y %H:%M'),
+            'ocupacion': asientos_ocupados,
+            'capacidad': vuelo.avion.capacidad,
+            'porcentaje': round((asientos_ocupados / vuelo.avion.capacidad) * 100, 1) if vuelo.avion.capacidad > 0 else 0
+        })
+    
+    data = {
+        'total_vuelos': total_vuelos,
+        'vuelos_activos': vuelos_activos,
+        'vuelos_en_vuelo': vuelos_en_vuelo,
+        'ocupacion_vuelos': ocupacion_vuelos,
+        'timestamp': timezone.now().isoformat()
+    }
+    
+    return JsonResponse(data)
+
+
+@staff_member_required
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_actualizar_estado_vuelo(request):
+    """
+    API endpoint para actualizar el estado de un vuelo.
+    """
+    
+    try:
+        data = json.loads(request.body)
+        vuelo_id = data.get('vuelo_id')
+        nuevo_estado = data.get('nuevo_estado')
+        
+        if not vuelo_id or not nuevo_estado:
+            return JsonResponse({'error': 'Datos incompletos'}, status=400)
+        
+        vuelo = Vuelo.objects.get(id=vuelo_id)
+        vuelo.estado = nuevo_estado
+        vuelo.save()
+        
+        return JsonResponse({
+            'success': True,
+            'mensaje': f'Estado del vuelo {vuelo} actualizado a {nuevo_estado}'
+        })
+        
+    except Vuelo.DoesNotExist:
+        return JsonResponse({'error': 'Vuelo no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500) 

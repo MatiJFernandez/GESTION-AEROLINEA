@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Error - Dashboard Administrativo{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Error en el Dashboard
+                    </h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="bi bi-speedometer2 display-1 text-danger"></i>
+                    </div>
+                    
+                    <h4 class="text-danger mb-3">{{ error_message|default:"Ha ocurrido un error inesperado" }}</h4>
+                    
+                    {% if error_details and debug %}
+                        <div class="alert alert-warning">
+                            <strong>Detalles del error:</strong><br>
+                            <code>{{ error_details }}</code>
+                        </div>
+                    {% endif %}
+                    
+                    <p class="text-muted mb-4">
+                        No se pudo cargar el dashboard administrativo. 
+                        Por favor, intenta nuevamente o contacta al administrador del sistema.
+                    </p>
+                    
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'vuelos:dashboard_admin' %}" class="btn btn-primary">
+                            <i class="bi bi-arrow-clockwise"></i> Reintentar
+                        </a>
+                        <a href="{% url 'vuelos:home' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-house"></i> Volver al Inicio
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-footer text-muted">
+                    <small>
+                        <i class="bi bi-calendar"></i> {{ hoy|date:"d/m/Y" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

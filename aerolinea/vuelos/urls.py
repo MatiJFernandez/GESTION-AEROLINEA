@@ -33,8 +33,12 @@ urlpatterns = [
     
     # URLs administrativas
     path('dashboard/', admin_views.dashboard_admin, name='dashboard_admin'),
-    path('reportes/pasajeros/', admin_views.reporte_pasajeros_vuelo, name='reporte_pasajeros'),
+    path('reportes/pasajeros/', admin_views.reporte_pasajeros, name='reporte_pasajeros'),
     path('reportes/pasajeros/<int:vuelo_id>/', admin_views.detalle_pasajeros_vuelo, name='detalle_pasajeros_vuelo'),
     path('estadisticas/ocupacion/', admin_views.estadisticas_ocupacion, name='estadisticas_ocupacion'),
-    path('api/estadisticas/', admin_views.api_estadisticas, name='api_estadisticas'),
+    path('api/estadisticas/', admin_views.api_estadisticas_vuelos, name='api_estadisticas'),
+    path('api/actualizar-estado/', admin_views.api_actualizar_estado_vuelo, name='api_actualizar_estado'),
+    
+    # Test de traducciones
+    path('test-translation/', views.test_translation, name='test_translation'),
 ] 

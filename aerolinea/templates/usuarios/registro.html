@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro - Sistema de Aerolínea{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="bi bi-person-plus"></i> Crear Cuenta
+                    </h3>
+                    <p class="mb-0 mt-2">Únete a Aerolínea y comienza a viajar</p>
+                </div>
+                <div class="card-body p-5">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Personal Information -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-person"></i> Información Personal
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                        Nombre *
+                                    </label>
+                                    {{ form.first_name }}
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.first_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                        Apellido *
+                                    </label>
+                                    {{ form.last_name }}
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.last_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                                        Email *
+                                    </label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.email.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.telefono.id_for_label }}" class="form-label">
+                                        Teléfono
+                                    </label>
+                                    {{ form.telefono }}
+                                    {% if form.telefono.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.telefono.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Account Information -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-shield-lock"></i> Información de Cuenta
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                                        Nombre de Usuario *
+                                    </label>
+                                    {{ form.username }}
+                                    {% if form.username.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.username.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    {% if form.username.help_text %}
+                                        <div class="form-text">{{ form.username.help_text }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                        Contraseña *
+                                    </label>
+                                    {{ form.password1 }}
+                                    {% if form.password1.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.password1.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    {% if form.password1.help_text %}
+                                        <div class="form-text">{{ form.password1.help_text }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                        Confirmar Contraseña *
+                                    </label>
+                                    {{ form.password2 }}
+                                    {% if form.password2.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.password2.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    {% if form.password2.help_text %}
+                                        <div class="form-text">{{ form.password2.help_text }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="rol" class="form-label">Tipo de Usuario</label>
+                                    <select class="form-select" id="rol" name="rol">
+                                        {% for value, label in roles_disponibles %}
+                                            <option value="{{ value }}" {% if form.rol.value == value %}selected{% endif %}>
+                                                {{ label }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    Acepto los <a href="#" class="text-decoration-none">Términos y Condiciones</a> 
+                                    y la <a href="#" class="text-decoration-none">Política de Privacidad</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-person-plus"></i> Crear Cuenta
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">
+                                ¿Ya tienes cuenta? 
+                                <a href="{% url 'usuarios:login' %}" class="text-decoration-none">
+                                    Inicia sesión aquí
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Benefits -->
+            <div class="row mt-4 text-center">
+                <div class="col-md-3">
+                    <div class="text-primary">
+                        <i class="bi bi-calendar-check display-6"></i>
+                    </div>
+                    <h6>Reservas Fáciles</h6>
+                    <small class="text-muted">Reserva tus vuelos en minutos</small>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-success">
+                        <i class="bi bi-percent display-6"></i>
+                    </div>
+                    <h6>Ofertas Exclusivas</h6>
+                    <small class="text-muted">Descuentos especiales para miembros</small>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-info">
+                        <i class="bi bi-clock-history display-6"></i>
+                    </div>
+                    <h6>Historial Completo</h6>
+                    <small class="text-muted">Accede a tu historial de viajes</small>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-warning">
+                        <i class="bi bi-headset display-6"></i>
+                    </div>
+                    <h6>Soporte 24/7</h6>
+                    <small class="text-muted">Atención al cliente siempre disponible</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Password strength indicator
+    document.getElementById('{{ form.password1.id_for_label }}').addEventListener('input', function() {
+        const password = this.value;
+        const strength = calculatePasswordStrength(password);
+        updatePasswordStrengthIndicator(strength);
+    });
+    
+    function calculatePasswordStrength(password) {
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        return strength;
+    }
+    
+    function updatePasswordStrengthIndicator(strength) {
+        const colors = ['danger', 'warning', 'info', 'primary', 'success'];
+        const labels = ['Muy débil', 'Débil', 'Media', 'Fuerte', 'Muy fuerte'];
+        
+        // Remove existing indicator
+        const existingIndicator = document.getElementById('password-strength');
+        if (existingIndicator) {
+            existingIndicator.remove();
+        }
+        
+        // Create new indicator
+        const indicator = document.createElement('div');
+        indicator.id = 'password-strength';
+        indicator.className = `alert alert-${colors[strength-1]} mt-2`;
+        indicator.innerHTML = `
+            <small>
+                <i class="bi bi-shield"></i> 
+                Fortaleza de la contraseña: ${labels[strength-1]}
+            </small>
+        `;
+        
+        document.getElementById('{{ form.password1.id_for_label }}').parentNode.appendChild(indicator);
+    }
+</script>
+{% endblock %} 

@@ -1,0 +1,78 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Test de Traducciones" %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>{% trans "Test de Traducciones" %}</h1>
+        
+        <!-- Selector de idioma -->
+        <div class="mb-4">
+            <h3>{% trans "Cambiar Idioma" %}</h3>
+            <div class="btn-group" role="group">
+                <form method="post" action="{% url 'set_language' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="language" value="es">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-outline-primary">🇪🇸 Español</button>
+                </form>
+                <form method="post" action="{% url 'set_language' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="language" value="en">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button type="submit" class="btn btn-outline-primary">🇺🇸 English</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Textos básicos -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>{% trans "Textos Básicos" %}</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Inicio" %}:</strong> {% trans "Inicio" %}</p>
+                <p><strong>{% trans "Buscar Vuelos" %}:</strong> {% trans "Buscar Vuelos" %}</p>
+                <p><strong>{% trans "Ver Todos los Vuelos" %}:</strong> {% trans "Ver Todos los Vuelos" %}</p>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>{% trans "Estadísticas" %}</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Vuelos Totales" %}:</strong> 150</p>
+                <p><strong>{% trans "Vuelos Activos" %}:</strong> 45</p>
+                <p><strong>{% trans "Pasajeros Registrados" %}:</strong> 1,250</p>
+            </div>
+        </div>
+
+        <!-- Información del sistema -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>{% trans "Información del Sistema" %}</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>{% trans "Idioma actual" %}:</strong> {{ LANGUAGE_CODE }}</p>
+                <p><strong>{% trans "Zona horaria" %}:</strong> {{ TIME_ZONE }}</p>
+                <p><strong>{% trans "Fecha actual" %}:</strong> {{ current_date|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mb-4">
+            <a href="{% url 'vuelos:home' %}" class="btn btn-primary">{% trans "Volver al Inicio" %}</a>
+            <a href="{% url 'admin:index' %}" class="btn btn-secondary">{% trans "Admin" %}</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

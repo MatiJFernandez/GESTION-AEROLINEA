@@ -4,6 +4,7 @@ Formularios para la aplicación usuarios.
 Este archivo contiene todos los formularios relacionados con:
 - Registro de usuarios
 - Edición de perfiles
+- Inicio de sesión
 """
 
 from django import forms
@@ -80,4 +81,44 @@ class UsuarioPerfilForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
-        } 
+        }
+
+class LoginForm(forms.Form):
+    """
+    Formulario para el inicio de sesión.
+    
+    Campos básicos para autenticación de usuarios.
+    """
+    
+    username = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Ingrese su nombre de usuario'
+            }
+        ),
+        help_text='Ingrese su nombre de usuario'
+    )
+    
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Ingrese su contraseña'
+            }
+        ),
+        help_text='Ingrese su contraseña'
+    )
+    
+    def clean(self):
+        """Validación personalizada del formulario"""
+        cleaned_data = super().clean()
+        username = cleaned_data.get('username')
+        password = cleaned_data.get('password')
+        
+        if username and password:
+            # Aquí podrías agregar validaciones adicionales si es necesario
+            pass
+        
+        return cleaned_data 

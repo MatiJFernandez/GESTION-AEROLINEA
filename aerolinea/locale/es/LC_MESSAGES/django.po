@@ -1,0 +1,245 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-07 18:30-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
+#: templates/base.html:95
+msgid "Aerolínea"
+msgstr "Aerolínea"
+
+#: templates/base.html:117 templates/test_translation.html:42
+#: templates/vuelos/home.html:4
+msgid "Inicio"
+msgstr "Inicio"
+
+#: templates/base.html:122
+msgid "Vuelos"
+msgstr "Vuelos"
+
+#: templates/base.html:127
+msgid "Buscar"
+msgstr "Buscar"
+
+#: templates/base.html:133
+msgid "Mi Historial"
+msgstr "Mi Historial"
+
+#: templates/base.html:140
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/base.html:154
+msgid "Mi Perfil"
+msgstr "Mi Perfil"
+
+#: templates/base.html:157
+msgid "Editar Perfil"
+msgstr "Editar Perfil"
+
+#: templates/base.html:161
+msgid "Cerrar Sesión"
+msgstr "Cerrar Sesión"
+
+#: templates/base.html:168
+msgid "Iniciar Sesión"
+msgstr "Iniciar Sesión"
+
+#: templates/base.html:173
+msgid "Registrarse"
+msgstr "Registrarse"
+
+#: templates/test_translation.html:4 templates/test_translation.html:14
+msgid "Test de Traducciones"
+msgstr "Test de Traducciones"
+
+#: templates/test_translation.html:21
+msgid "Cambiar Idioma"
+msgstr "Cambiar Idioma"
+
+#: templates/test_translation.html:39
+msgid "Textos Básicos"
+msgstr "Textos Básicos"
+
+#: templates/test_translation.html:45 templates/vuelos/home.html:20
+#: templates/vuelos/home.html:207
+msgid "Buscar Vuelos"
+msgstr "Buscar Vuelos"
+
+#: templates/test_translation.html:48 templates/vuelos/home.html:23
+msgid "Ver Todos los Vuelos"
+msgstr "Ver Todos los Vuelos"
+
+#: templates/test_translation.html:51 templates/vuelos/home.html:43
+msgid "Vuelos Totales"
+msgstr "Vuelos Totales"
+
+#: templates/test_translation.html:54 templates/vuelos/home.html:52
+msgid "Vuelos Activos"
+msgstr "Vuelos Activos"
+
+#: templates/test_translation.html:60
+msgid "Información del Sistema"
+msgstr "Información del Sistema"
+
+#: templates/test_translation.html:63
+msgid "Idioma actual"
+msgstr "Idioma actual"
+
+#: templates/test_translation.html:66
+msgid "Zona horaria"
+msgstr ""
+
+#: templates/test_translation.html:69
+msgid "Fecha actual"
+msgstr ""
+
+#: templates/test_translation.html:72
+msgid "Hora actual"
+msgstr ""
+
+#: templates/test_translation.html:82
+msgid "Textos Complejos"
+msgstr ""
+
+#: templates/test_translation.html:84
+msgid "Descripción del Sistema"
+msgstr ""
+
+#: templates/test_translation.html:85 templates/vuelos/home.html:16
+msgid ""
+"Descubre destinos increíbles con los mejores precios y la mayor comodidad. "
+"Reserva tu vuelo ahora y comienza tu próxima aventura."
+msgstr ""
+
+#: templates/test_translation.html:89
+msgid "Mensaje de Bienvenida"
+msgstr ""
+
+#: templates/test_translation.html:90 templates/vuelos/home.html:13
+msgid "Viaja por el mundo con nosotros"
+msgstr ""
+
+#: templates/test_translation.html:97
+msgid "Volver al Inicio"
+msgstr ""
+
+#: templates/test_translation.html:100
+msgid "Ver Vuelos"
+msgstr ""
+
+#: templates/vuelos/home.html:4
+msgid "Sistema de Aerolínea"
+msgstr "Sistema de Aerolínea"
+
+#: templates/vuelos/home.html:61
+msgid "Aviones"
+msgstr "Aviones"
+
+#: templates/vuelos/home.html:70
+msgid "Soporte"
+msgstr "Soporte"
+
+#: templates/vuelos/home.html:83
+msgid "Vuelos Próximos"
+msgstr "Vuelos Próximos"
+
+#: templates/vuelos/home.html:84
+msgid "Descubre nuestros próximos vuelos disponibles"
+msgstr "Descubre nuestros próximos vuelos disponibles"
+
+#: templates/vuelos/home.html:88
+msgid "Ver Todos"
+msgstr "Ver Todos"
+
+#: templates/vuelos/home.html:111
+msgid "Salida"
+msgstr "Salida"
+
+#: templates/vuelos/home.html:115
+msgid "Llegada"
+msgstr "Llegada"
+
+#: templates/vuelos/home.html:122
+msgid "Duración"
+msgstr "Duración"
+
+#: templates/vuelos/home.html:126
+msgid "Precio"
+msgstr "Precio"
+
+#: templates/vuelos/home.html:133
+msgid "Ver Detalles"
+msgstr "Ver Detalles"
+
+#: templates/vuelos/home.html:143
+msgid "No hay vuelos próximos"
+msgstr "No hay vuelos próximos"
+
+#: templates/vuelos/home.html:144
+msgid "Pronto tendremos nuevos vuelos disponibles"
+msgstr "Pronto tendremos nuevos vuelos disponibles"
+
+#: templates/vuelos/home.html:155
+msgid "¿Por qué elegirnos?"
+msgstr "¿Por qué elegirnos?"
+
+#: templates/vuelos/home.html:156
+msgid "Descubre las ventajas de volar con nosotros"
+msgstr "Descubre las ventajas de volar con nosotros"
+
+#: templates/vuelos/home.html:166
+msgid "Seguridad Garantizada"
+msgstr "Seguridad Garantizada"
+
+#: templates/vuelos/home.html:167
+msgid "Tu seguridad es nuestra prioridad número uno"
+msgstr "Tu seguridad es nuestra prioridad número uno"
+
+#: templates/vuelos/home.html:175
+msgid "Mejores Precios"
+msgstr "Mejores Precios"
+
+#: templates/vuelos/home.html:176
+msgid "Ofertas exclusivas y precios competitivos"
+msgstr "Ofertas exclusivas y precios competitivos"
+
+#: templates/vuelos/home.html:184
+msgid "Puntualidad"
+msgstr "Puntualidad"
+
+#: templates/vuelos/home.html:185
+msgid "Compromiso con la puntualidad en todos nuestros vuelos"
+msgstr "Compromiso con la puntualidad en todos nuestros vuelos"
+
+#: templates/vuelos/home.html:193
+msgid "Soporte 24/7"
+msgstr "Soporte 24/7"
+
+#: templates/vuelos/home.html:194
+msgid "Atención al cliente disponible en todo momento"
+msgstr "Atención al cliente disponible en todo momento"
+
+#: templates/vuelos/home.html:204
+msgid "¿Listo para tu próxima aventura?"
+msgstr "¿Listo para tu próxima aventura?"
+
+#: templates/vuelos/home.html:205
+msgid "Reserva tu vuelo ahora y disfruta de las mejores ofertas"
+msgstr "Reserva tu vuelo ahora y disfruta de las mejores ofertas"
+
+

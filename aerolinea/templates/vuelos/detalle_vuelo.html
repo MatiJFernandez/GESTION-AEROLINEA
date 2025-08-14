@@ -158,7 +158,7 @@
                                  data-asiento-id="{{ asiento.id }}"
                                  data-asiento-numero="{{ asiento.numero }}"
                                  data-asiento-tipo="{{ asiento.tipo }}"
-                                 data-precio="{{ precios_por_tipo|get_item:asiento.tipo }}"
+                                 data-precio="{% if asiento.tipo == 'primera' %}{{ precios_por_tipo.primera }}{% elif asiento.tipo == 'premium' %}{{ precios_por_tipo.premium }}{% else %}{{ precios_por_tipo.economica }}{% endif %}"
                                  onclick="seleccionarAsiento(this)">
                                 {{ asiento.numero }}
                             </div>

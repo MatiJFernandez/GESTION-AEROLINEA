@@ -267,10 +267,11 @@ def cancelar_reserva(request, reserva_id):
                 # Política de reembolso: 80% si se cancela más de 24h antes
                 from django.utils import timezone
                 tiempo_restante = reserva.vuelo.fecha_salida - timezone.now()
+                from decimal import Decimal
                 if tiempo_restante.total_seconds() > 86400:  # 24 horas
-                    reembolso = reserva.precio * 0.8
+                    reembolso = reserva.precio * Decimal('0.8')
                 else:
-                    reembolso = reserva.precio * 0.5
+                    reembolso = reserva.precio * Decimal('0.5')
             
             messages.success(
                 request, 
@@ -287,11 +288,12 @@ def cancelar_reserva(request, reserva_id):
     
     if puede_cancelar and reserva.precio:
         from django.utils import timezone
+        from decimal import Decimal
         tiempo_restante = reserva.vuelo.fecha_salida - timezone.now()
         if tiempo_restante.total_seconds() > 86400:  # 24 horas
-            reembolso = reserva.precio * 0.8
+            reembolso = reserva.precio * Decimal('0.8')
         else:
-            reembolso = reserva.precio * 0.5
+            reembolso = reserva.precio * Decimal('0.5')
     
     context = {
         'reserva': reserva,
@@ -510,9 +512,30 @@ def verificar_disponibilidad(request):
 @login_required
 def mi_historial(request):
     """Vista para mostrar el historial de reservas del usuario actual"""
-    reservas = Reserva.objects.filter(
-        pasajero__email=request.user.email
-    ).order_by('-fecha_reserva')
+    try:
+        # Intentar obtener el pasajero asociado al usuario actual
+        from pasajeros.models import Pasajero
+        
+        # Buscar el pasajero por email del usuario
+        pasajero = Pasajero.objects.filter(email=request.user.email).first()
+        
+        if pasajero:
+            # Si existe un pasajero, obtener sus reservas
+            reservas = Reserva.objects.filter(
+                pasajero=pasajero
+            ).select_related(
+                'vuelo', 'pasajero', 'asiento'
+            ).order_by('-fecha_reserva')
+        else:
+            # Si no existe pasajero, mostrar lista vacía
+            reservas = Reserva.objects.none()
+            
+    except Exception as e:
+        # En caso de error, loggear y mostrar lista vacía
+        import logging
+        logger = logging.getLogger('django.request')
+        logger.error(f"Error en mi_historial: {str(e)}")
+        reservas = Reserva.objects.none()
     
     context = {
         'reservas': reservas,

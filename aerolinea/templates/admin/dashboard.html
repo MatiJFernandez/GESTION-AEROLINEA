@@ -206,15 +206,32 @@
                                         <td>{{ vuelo.fecha_salida|date:"H:i" }}</td>
                                         <td>
                                             <span class="badge bg-{% if vuelo.estado == 'programado' %}success{% elif vuelo.estado == 'en_vuelo' %}info{% else %}secondary{% endif %}">
-                                                {{ vuelo.get_estado_display }}
+                                                {% if vuelo.estado == 'programado' %}
+                                                    Programado
+                                                {% elif vuelo.estado == 'en_vuelo' %}
+                                                    En Vuelo
+                                                {% elif vuelo.estado == 'aterrizado' %}
+                                                    Aterrizado
+                                                {% elif vuelo.estado == 'cancelado' %}
+                                                    Cancelado
+                                                {% else %}
+                                                    {{ vuelo.estado|title }}
+                                                {% endif %}
                                             </span>
                                         </td>
                                         <td>
-                                            {% with ocupacion=vuelo.reservas.count|div:vuelo.avion.capacidad|mul:100 %}
-                                            <div class="progress progress-thin" style="width: 60px;">
-                                                <div class="progress-bar bg-success" style="width: {{ ocupacion }}%"></div>
-                                            </div>
-                                            <small>{{ ocupacion|floatformat:0 }}%</small>
+                                            {% with total_reservas=vuelo.reservas.count %}
+                                            {% with capacidad=vuelo.avion.capacidad %}
+                                            {% if capacidad > 0 %}
+                                                {% widthratio total_reservas capacidad 100 as ocupacion %}
+                                                <div class="progress progress-thin" style="width: 60px;">
+                                                    <div class="progress-bar bg-success" style="width: {{ ocupacion }}%"></div>
+                                                </div>
+                                                <small>{{ ocupacion }}%</small>
+                                            {% else %}
+                                                <small>0%</small>
+                                            {% endif %}
+                                            {% endwith %}
                                             {% endwith %}
                                         </td>
                                     </tr>
@@ -263,11 +280,23 @@
                                         </td>
                                         <td>
                                             <span class="badge bg-{% if reserva.estado == 'confirmada' %}success{% elif reserva.estado == 'pendiente' %}warning{% else %}secondary{% endif %}">
-                                                {{ reserva.get_estado_display }}
+                                                {% if reserva.estado == 'confirmada' %}
+                                                    Confirmada
+                                                {% elif reserva.estado == 'pendiente' %}
+                                                    Pendiente
+                                                {% elif reserva.estado == 'cancelada' %}
+                                                    Cancelada
+                                                {% elif reserva.estado == 'completada' %}
+                                                    Completada
+                                                {% elif reserva.estado == 'expirada' %}
+                                                    Expirada
+                                                {% else %}
+                                                    {{ reserva.estado|title }}
+                                                {% endif %}
                                             </span>
                                         </td>
                                         <td>
-                                            <small>{{ reserva.fecha_reserva|date:"d/m H:i" }}</small>
+                                            <small>{{ reserva.fecha_reserva|date:"d/m/Y H:i" }}</small>
                                         </td>
                                     </tr>
                                     {% endfor %}

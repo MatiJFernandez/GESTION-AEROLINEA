@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Seleccionar Vuelo - Sistema de Aerolínea{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-airplane"></i> Seleccionar Vuelo
+                    </h3>
+                </div>
+                <div class="card-body">
+                    {% if vuelos %}
+                        <div class="row">
+                            {% for vuelo in vuelos %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="card-title mb-0">
+                                                {{ vuelo.origen }} → {{ vuelo.destino }}
+                                            </h5>
+                                            <span class="badge bg-success">Disponible</span>
+                                        </div>
+                                        
+                                        <div class="row text-muted small mb-3">
+                                            <div class="col-6">
+                                                <i class="bi bi-calendar"></i> {{ vuelo.fecha_salida|date:"d/m/Y" }}
+                                            </div>
+                                            <div class="col-6">
+                                                <i class="bi bi-clock"></i> {{ vuelo.fecha_salida|date:"H:i" }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row text-muted small mb-3">
+                                            <div class="col-6">
+                                                <i class="bi bi-airplane"></i> {{ vuelo.avion.modelo }}
+                                            </div>
+                                            <div class="col-6">
+                                                <i class="bi bi-currency-dollar"></i> ${{ vuelo.precio_base }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <i class="bi bi-people"></i> {{ vuelo.avion.capacidad }} asientos
+                                            </small>
+                                            <a href="{% url 'reservas:crear_reserva' %}?vuelo_id={{ vuelo.id }}" 
+                                               class="btn btn-primary btn-sm">
+                                                <i class="bi bi-check-circle"></i> Seleccionar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Paginación -->
+                        {% if vuelos.has_other_pages %}
+                        <nav aria-label="Navegación de vuelos" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if vuelos.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ vuelos.previous_page_number }}">
+                                            <i class="bi bi-chevron-left"></i> Anterior
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for num in vuelos.paginator.page_range %}
+                                    {% if vuelos.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > vuelos.number|add:'-3' and num < vuelos.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if vuelos.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ vuelos.next_page_number }}">
+                                            Siguiente <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-airplane text-muted" style="font-size: 3rem;"></i>
+                            <h4 class="text-muted mt-3">No hay vuelos disponibles</h4>
+                            <p class="text-muted">No se encontraron vuelos programados en este momento.</p>
+                            <a href="{% url 'vuelos:home' %}" class="btn btn-primary">
+                                <i class="bi bi-arrow-left"></i> Volver al Inicio
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

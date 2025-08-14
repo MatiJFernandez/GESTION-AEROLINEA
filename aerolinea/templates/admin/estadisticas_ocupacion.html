@@ -78,7 +78,11 @@
         {% with total_vuelos=estadisticas_diarias|length %}
         {% with total_asientos=estadisticas_diarias|sum:'total_asientos' %}
         {% with total_ocupados=estadisticas_diarias|sum:'asientos_ocupados' %}
-        {% with ocupacion_promedio=total_ocupados|div:total_asientos|mul:100 %}
+        {% if total_asientos > 0 %}
+            {% widthratio total_ocupados total_asientos 100 as ocupacion_promedio %}
+        {% else %}
+            {% with ocupacion_promedio=0 %}
+        {% endif %}
         
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-0 shadow-sm stat-card">

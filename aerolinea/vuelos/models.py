@@ -223,11 +223,12 @@ class Vuelo(models.Model):
         Returns:
             Precio calculado para el tipo de asiento
         """
+        from decimal import Decimal
         multiplicadores = {
-            'economica': 1.0,
-            'premium': 1.5,
-            'primera': 2.0,
+            'economica': Decimal('1.0'),
+            'premium': Decimal('1.5'),
+            'primera': Decimal('2.0'),
         }
         
-        multiplicador = multiplicadores.get(tipo_asiento, 1.0)
+        multiplicador = multiplicadores.get(tipo_asiento, Decimal('1.0'))
         return self.precio_base * multiplicador

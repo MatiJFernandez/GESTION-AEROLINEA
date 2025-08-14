@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Reserva</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .title {
+            color: #28a745;
+            font-size: 20px;
+            margin: 0;
+        }
+        .flight-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        .route {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #6c757d;
+        }
+        .detail-value {
+            color: #333;
+        }
+        .passenger-info {
+            background-color: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #17a2b8;
+        }
+        .seat-info {
+            background-color: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">✈️ Aerolínea</div>
+            <h1 class="title">¡Reserva Confirmada!</h1>
+            <p>Tu reserva ha sido confirmada exitosamente</p>
+        </div>
+
+        <div class="flight-info">
+            <div class="route">
+                {{ vuelo.origen }} → {{ vuelo.destino }}
+            </div>
+            <div class="details">
+                <div class="detail-item">
+                    <span class="detail-label">Código de Vuelo:</span>
+                    <span class="detail-value">{{ vuelo.codigo_vuelo }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Fecha de Salida:</span>
+                    <span class="detail-value">{{ vuelo.fecha_salida|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Fecha de Llegada:</span>
+                    <span class="detail-value">{{ vuelo.fecha_llegada|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Duración:</span>
+                    <span class="detail-value">{{ vuelo.duracion }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Avión:</span>
+                    <span class="detail-value">{{ vuelo.avion.modelo }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Estado:</span>
+                    <span class="detail-value">{{ vuelo.get_estado_display }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="passenger-info">
+            <h3>👤 Información del Pasajero</h3>
+            <div class="details">
+                <div class="detail-item">
+                    <span class="detail-label">Nombre:</span>
+                    <span class="detail-value">{{ pasajero.nombre }} {{ pasajero.apellido }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Documento:</span>
+                    <span class="detail-value">{{ pasajero.documento }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{ pasajero.email }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Teléfono:</span>
+                    <span class="detail-value">{{ pasajero.telefono|default:"No especificado" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="seat-info">
+            <h3>💺 Información del Asiento</h3>
+            <div class="details">
+                <div class="detail-item">
+                    <span class="detail-label">Número de Asiento:</span>
+                    <span class="detail-value">{{ asiento.numero }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Fila:</span>
+                    <span class="detail-value">{{ asiento.fila }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Columna:</span>
+                    <span class="detail-value">{{ asiento.columna }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Tipo:</span>
+                    <span class="detail-value">{{ asiento.get_tipo_display }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <h3>💰 Detalles de Pago</h3>
+            <div class="details">
+                <div class="detail-item">
+                    <span class="detail-label">Precio:</span>
+                    <span class="detail-value">${{ reservation.precio|floatformat:2 }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Código de Reserva:</span>
+                    <span class="detail-value">{{ reservation.codigo_reserva }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Estado:</span>
+                    <span class="detail-value">{{ reservation.get_estado_display }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Fecha de Vencimiento:</span>
+                    <span class="detail-value">{{ reservation.fecha_vencimiento|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="#" class="button">Ver Detalles de la Reserva</a>
+        </div>
+
+        <div class="footer">
+            <p><strong>Importante:</strong></p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>Llega al aeropuerto al menos 2 horas antes del vuelo</li>
+                <li>Lleva tu documento de identidad</li>
+                <li>Verifica el estado del vuelo antes de salir</li>
+                <li>Para cambios o cancelaciones, contacta a nuestro servicio al cliente</li>
+            </ul>
+            
+            <p style="margin-top: 20px;">
+                Si tienes alguna pregunta, no dudes en contactarnos:<br>
+                📧 info@aerolinea.com<br>
+                📞 +54 11 1234-5678
+            </p>
+            
+            <p style="margin-top: 20px; font-size: 12px;">
+                Este es un email automático, por favor no respondas a este mensaje.
+            </p>
+        </div>
+    </div>
+</body>
+</html> 

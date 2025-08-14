@@ -1,0 +1,219 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-07 18:30-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: templates/base.html:95
+msgid "Aerolínea"
+msgstr "Airline"
+
+#: templates/base.html:118
+msgid "Inicio"
+msgstr "Home"
+
+#: templates/base.html:123
+msgid "Vuelos"
+msgstr "Flights"
+
+#: templates/base.html:128
+msgid "Buscar"
+msgstr "Search"
+
+#: templates/base.html:135
+msgid "Mi Historial"
+msgstr "My History"
+
+#: templates/base.html:141
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: templates/base.html:152
+msgid "Mi Perfil"
+msgstr "My Profile"
+
+#: templates/base.html:155
+msgid "Editar Perfil"
+msgstr "Edit Profile"
+
+#: templates/base.html:159
+msgid "Cerrar Sesión"
+msgstr "Logout"
+
+#: templates/base.html:167
+msgid "Iniciar Sesión"
+msgstr "Login"
+
+#: templates/base.html:171
+msgid "Registrarse"
+msgstr "Register"
+
+#: templates/vuelos/home.html:13
+msgid "Viaja por el mundo con nosotros"
+msgstr "Travel the world with us"
+
+#: templates/vuelos/home.html:52
+msgid "Buscar Vuelos"
+msgstr "Search Flights"
+
+#: templates/vuelos/home.html:61
+msgid "Vuelos Totales"
+msgstr "Total Flights"
+
+#: templates/vuelos/home.html:70
+msgid "Vuelos Activos"
+msgstr "Active Flights"
+
+#: templates/vuelos/home.html:79
+msgid "Aviones"
+msgstr "Aircraft"
+
+#: templates/vuelos/home.html:88
+msgid "Soporte"
+msgstr "Support"
+
+#: templates/test_translation.html:4 templates/test_translation.html:14
+msgid "Test de Traducciones"
+msgstr "Translation Test"
+
+#: templates/test_translation.html:21
+msgid "Cambiar Idioma"
+msgstr "Change Language"
+
+#: templates/test_translation.html:39
+msgid "Textos Básicos"
+msgstr "Basic Texts"
+
+#: templates/vuelos/home.html:23
+msgid "Ver Todos los Vuelos"
+msgstr "View All Flights"
+
+#: templates/vuelos/home.html:4
+msgid "Sistema de Aerolínea"
+msgstr "Airline System"
+
+#: templates/vuelos/home.html:83
+msgid "Vuelos Próximos"
+msgstr "Upcoming Flights"
+
+#: templates/vuelos/home.html:84
+msgid "Descubre nuestros próximos vuelos disponibles"
+msgstr "Discover our upcoming available flights"
+
+#: templates/vuelos/home.html:88
+msgid "Ver Todos"
+msgstr "View All"
+
+#: templates/vuelos/home.html:111
+msgid "Salida"
+msgstr "Departure"
+
+#: templates/vuelos/home.html:115
+msgid "Llegada"
+msgstr "Arrival"
+
+#: templates/vuelos/home.html:122
+msgid "Duración"
+msgstr "Duration"
+
+#: templates/vuelos/home.html:126
+msgid "Precio"
+msgstr "Price"
+
+#: templates/vuelos/home.html:133
+msgid "Ver Detalles"
+msgstr "View Details"
+
+#: templates/vuelos/home.html:143
+msgid "No hay vuelos próximos"
+msgstr "No upcoming flights"
+
+#: templates/vuelos/home.html:144
+msgid "Pronto tendremos nuevos vuelos disponibles"
+msgstr "Soon we will have new flights available"
+
+#: templates/vuelos/home.html:155
+msgid "¿Por qué elegirnos?"
+msgstr "Why choose us?"
+
+#: templates/vuelos/home.html:156
+msgid "Descubre las ventajas de volar con nosotros"
+msgstr "Discover the advantages of flying with us"
+
+#: templates/vuelos/home.html:166
+msgid "Seguridad Garantizada"
+msgstr "Guaranteed Safety"
+
+#: templates/vuelos/home.html:167
+msgid "Tu seguridad es nuestra prioridad número uno"
+msgstr "Your safety is our number one priority"
+
+#: templates/vuelos/home.html:175
+msgid "Mejores Precios"
+msgstr "Best Prices"
+
+#: templates/vuelos/home.html:176
+msgid "Ofertas exclusivas y precios competitivos"
+msgstr "Exclusive offers and competitive prices"
+
+#: templates/vuelos/home.html:184
+msgid "Puntualidad"
+msgstr "Punctuality"
+
+#: templates/vuelos/home.html:185
+msgid "Compromiso con la puntualidad en todos nuestros vuelos"
+msgstr "Commitment to punctuality in all our flights"
+
+#: templates/vuelos/home.html:193
+msgid "Soporte 24/7"
+msgstr "24/7 Support"
+
+#: templates/vuelos/home.html:194
+msgid "Atención al cliente disponible en todo momento"
+msgstr "Customer service available at all times"
+
+#: templates/vuelos/home.html:204
+msgid "¿Listo para tu próxima aventura?"
+msgstr "Ready for your next adventure?"
+
+#: templates/vuelos/home.html:205
+msgid "Reserva tu vuelo ahora y disfruta de las mejores ofertas"
+msgstr "Book your flight now and enjoy the best offers"
+
+# Traducciones adicionales
+msgid "Español"
+msgstr "Spanish"
+
+msgid "English"
+msgstr "English"
+
+msgid "Estadísticas"
+msgstr "Statistics"
+
+msgid "Pasajeros Registrados"
+msgstr "Registered Passengers"
+
+msgid "Zona horaria"
+msgstr "Time zone"
+
+msgid "Fecha actual"
+msgstr "Current date"
+
+msgid "Volver al Inicio"
+msgstr "Back to Home"
+
+msgid "Admin"
+msgstr "Admin"

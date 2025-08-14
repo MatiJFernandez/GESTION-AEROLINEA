@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import sentry_sdk
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,40 +54,33 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # Middleware para internacionalización
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Middleware personalizado
-    'aerolinea.middleware.RequestLoggingMiddleware',
-    'aerolinea.middleware.ErrorHandlingMiddleware',
-    'aerolinea.middleware.SecurityMiddleware',
+    # Middleware personalizado (comentado temporalmente para debug)
+    # 'aerolinea.middleware.RequestLoggingMiddleware',
+    # 'aerolinea.middleware.ErrorHandlingMiddleware',
+    # 'aerolinea.middleware.SecurityMiddleware',
 ]
 
 ROOT_URLCONF = 'aerolinea.urls'
 
 TEMPLATES = [
     {
-        # Motor de templates de Django (HTML)
+        # Motor de templates de Django (HTML) para admin
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        
-        # Directorios donde Django buscará templates
-        # BASE_DIR / 'templates' = carpeta 'templates' en la raíz del proyecto
         'DIRS': [BASE_DIR / 'templates'],
-        
-        # Buscar templates en cada aplicación (app/templates/)
         'APP_DIRS': True,
-        
         'OPTIONS': {
-            # Procesadores de contexto (variables disponibles en todos los templates)
             'context_processors': [
-                # request - objeto HttpRequest disponible en templates
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                # auth - información del usuario autenticado
                 'django.contrib.auth.context_processors.auth',
-                # messages - mensajes flash para el usuario
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',  # Context processor para i18n
             ],
         },
     },
@@ -129,7 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization (Internacionalización)
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-# Idioma principal de la aplicación (es = español)
+# Idioma principal de la aplicación (es = español por defecto)
 LANGUAGE_CODE = 'es'
 
 # Zona horaria del servidor (Argentina)
@@ -144,6 +142,17 @@ USE_L10N = True
 
 # Habilita el manejo de zonas horarias en la base de datos
 USE_TZ = True
+
+# Idiomas disponibles para traducción
+LANGUAGES = [
+    ('es', 'Español'),
+    ('en', 'English'),
+]
+
+# Directorio donde se encuentran los archivos de traducción
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 
 # Static files (CSS, JavaScript, Images)
@@ -185,3 +194,40 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Indica a Django que use nuestro modelo Usuario personalizado
 # en lugar del modelo User por defecto
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import ignore_logger
+from sentry_sdk.integrations.logging import LoggingIntegration
+import logging
+
+sentry_logging = LoggingIntegration(
+    level=logging.INFO,  # Log level
+    event_level=logging.ERROR,  # Error level
+)
+
+# Configuración de Sentry para el seguimiento de errores
+sentry_sdk.init(
+    dsn='https://e9457fd8119b9f0bd50623ac61f36775@o4509805216268288.ingest.us.sentry.io/4509805239009280',
+    integrations=[DjangoIntegration(),
+    sentry_logging],
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+
+    'root': {
+        'level': 'INFO',
+        'handlers': ['console'],
+    },
+}

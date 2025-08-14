@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,76 +12,269 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-gray: #f8f9fa;
+            --medium-gray: #6c757d;
+            --dark-gray: #343a40;
+            --white: #ffffff;
+            --border-color: #e9ecef;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-color);
+            background-color: var(--white);
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: var(--white) !important;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+        }
+
         .navbar-brand {
-            font-weight: bold;
-            color: #0d6efd !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            text-decoration: none;
         }
-        
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4rem 0;
+
+        .navbar-brand:hover {
+            color: var(--secondary-color) !important;
         }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+
+        .navbar-nav .nav-link {
+            color: var(--medium-gray) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px;
             transition: all 0.3s ease;
         }
-        
-        .footer {
-            background-color: #343a40;
-            color: white;
-            padding: 2rem 0;
-            margin-top: 3rem;
+
+        .navbar-nav .nav-link:hover {
+            color: var(--secondary-color) !important;
+            background-color: var(--light-gray);
         }
-        
+
+        .navbar-nav .nav-link.active {
+            color: var(--secondary-color) !important;
+            background-color: var(--light-gray);
+        }
+
+        /* Dropdown Styles */
+        .dropdown-menu {
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            color: var(--medium-gray);
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-gray);
+            color: var(--secondary-color);
+        }
+
+        /* Button Styles */
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            background-color: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            transform: translateY(-1px);
+        }
+
+        /* Card Styles */
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            background-color: var(--light-gray);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: 5rem 0;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-weight: 700;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+        }
+
+        /* Asientos */
         .asiento {
             width: 40px;
             height: 40px;
-            margin: 2px;
-            border: 2px solid #dee2e6;
-            border-radius: 5px;
+            margin: 3px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
-        
+
         .asiento.disponible {
-            background-color: #d4edda;
-            border-color: #28a745;
-            color: #155724;
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+            color: var(--white);
         }
-        
+
         .asiento.ocupado {
-            background-color: #f8d7da;
-            border-color: #dc3545;
-            color: #721c24;
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+            color: var(--white);
             cursor: not-allowed;
         }
-        
+
         .asiento.seleccionado {
-            background-color: #cce5ff;
-            border-color: #007bff;
-            color: #004085;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--white);
+            transform: scale(1.1);
         }
-        
+
         .asiento.reservado {
-            background-color: #fff3cd;
-            border-color: #ffc107;
-            color: #856404;
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+            color: var(--white);
             cursor: not-allowed;
         }
+
+        /* Utility Classes */
+        .text-primary { color: var(--primary-color) !important; }
+        .text-secondary { color: var(--secondary-color) !important; }
+        .text-accent { color: var(--accent-color) !important; }
         
+        .bg-light { background-color: var(--light-gray) !important; }
+        .bg-primary { background-color: var(--primary-color) !important; }
+        .bg-secondary { background-color: var(--secondary-color) !important; }
+
+        /* Loading */
         .loading {
             display: none;
         }
-        
+
+        /* Alerts */
+        .alert {
+            border-radius: 8px;
+            border: none;
+            box-shadow: var(--shadow);
+        }
+
         .alert-dismissible .btn-close {
             padding: 0.75rem 1rem;
+        }
+
+        /* Form Controls */
+        .form-control, .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        /* Table Styles */
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .table thead th {
+            background-color: var(--light-gray);
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
         }
     </style>
     
@@ -91,8 +285,36 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{% url 'vuelos:home' %}">
-                <i class="bi bi-airplane-engines"></i> Aerolínea
+                <i class="bi bi-airplane-engines"></i> {% trans "Aerolínea" %}
             </a>
+            
+                    <!-- Language Selector -->
+        <div class="navbar-nav ms-auto me-3">
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-translate"></i>
+                    {% if LANGUAGE_CODE == 'es' %}🇪🇸 Español{% else %}🇺🇸 English{% endif %}
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <form method="post" action="{% url 'set_language' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="language" value="es">
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <button type="submit" class="dropdown-item">🇪🇸 {% trans "Español" %}</button>
+                        </form>
+                    </li>
+                    <li>
+                        <form method="post" action="{% url 'set_language' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="language" value="en">
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <button type="submit" class="dropdown-item">🇺🇸 {% trans "English" %}</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -102,30 +324,30 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'vuelos:home' %}">
-                            <i class="bi bi-house"></i> Inicio
+                            <i class="bi bi-house"></i> {% trans "Inicio" %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'vuelos:lista_vuelos' %}">
-                            <i class="bi bi-calendar3"></i> Vuelos
+                            <i class="bi bi-calendar3"></i> {% trans "Vuelos" %}
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'vuelos:buscar_vuelos' %}">
-                            <i class="bi bi-search"></i> Buscar
+                            <i class="bi bi-search"></i> {% trans "Buscar" %}
                         </a>
                     </li>
                                              {% if user.is_authenticated %}
                          <li class="nav-item">
                              <a class="nav-link" href="{% url 'reservas:mi_historial' %}">
-                                 <i class="bi bi-clock-history"></i> Mi Historial
+                                 <i class="bi bi-clock-history"></i> {% trans "Mi Historial" %}
                              </a>
                          </li>
                          {% endif %}
                          {% if user.is_staff %}
                          <li class="nav-item">
                              <a class="nav-link" href="{% url 'vuelos:dashboard_admin' %}">
-                                 <i class="bi bi-speedometer2"></i> Dashboard
+                                 <i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}
                              </a>
                          </li>
                          {% endif %}
@@ -139,26 +361,26 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'usuarios:perfil' %}">
-                                    <i class="bi bi-person"></i> Mi Perfil
+                                    <i class="bi bi-person"></i> {% trans "Mi Perfil" %}
                                 </a></li>
                                 <li><a class="dropdown-item" href="{% url 'usuarios:editar_perfil' %}">
-                                    <i class="bi bi-pencil"></i> Editar Perfil
+                                    <i class="bi bi-pencil"></i> {% trans "Editar Perfil" %}
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'usuarios:logout' %}">
-                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                    <i class="bi bi-box-arrow-right"></i> {% trans "Cerrar Sesión" %}
                                 </a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'usuarios:login' %}">
-                                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                <i class="bi bi-box-arrow-in-right"></i> {% trans "Iniciar Sesión" %}
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'usuarios:registro' %}">
-                                <i class="bi bi-person-plus"></i> Registrarse
+                                <i class="bi bi-person-plus"></i> {% trans "Registrarse" %}
                             </a>
                         </li>
                     {% endif %}
