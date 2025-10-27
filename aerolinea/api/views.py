@@ -2,6 +2,11 @@
 Vistas para la API REST.
 
 Este archivo define los viewsets y vistas para los endpoints de la API.
+
+Documentación automática disponible en:
+- Swagger UI: /swagger/
+- ReDoc: /redoc/
+- Schema JSON: /swagger.json
 """
 
 from rest_framework import viewsets, permissions, status
@@ -114,7 +119,18 @@ class VueloViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['get'])
     def asientos_disponibles(self, request, pk=None):
-        """Retorna los asientos disponibles para un vuelo."""
+        """
+        Retorna los asientos disponibles para un vuelo específico.
+        
+        Este endpoint lista todos los asientos con estado 'disponible' del avión
+        asociado al vuelo.
+        
+        Parámetros:
+            pk: ID del vuelo
+        
+        Returns:
+            Lista de asientos disponibles con sus características
+        """
         vuelo = self.get_object()
         asientos_disponibles = Asiento.objects.filter(
             avion=vuelo.avion,
@@ -209,7 +225,12 @@ class ReservaViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def confirmar(self, request, pk=None):
-        """Confirma una reserva pendiente."""
+        """
+        Confirma una reserva pendiente.
+        
+        Cambia el estado de la reserva de 'pendiente' a 'confirmada'.
+        Solo funciona si la reserva está en estado pendiente.
+        """
         reserva = self.get_object()
         if reserva.estado == 'pendiente':
             reserva.estado = 'confirmada'
@@ -223,7 +244,12 @@ class ReservaViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def cancelar(self, request, pk=None):
-        """Cancela una reserva."""
+        """
+        Cancela una reserva.
+        
+        Verifica si la reserva puede ser cancelada según sus reglas de negocio
+        y cambia su estado a 'cancelada'.
+        """
         reserva = self.get_object()
         if reserva.puede_cancelar():
             reserva.estado = 'cancelada'
@@ -248,7 +274,15 @@ class BoletoViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def usar(self, request, pk=None):
-        """Marca un boleto como usado."""
+        """
+        Marca un boleto como usado.
+        
+        Este endpoint se usa cuando un pasajero aborda el vuelo.
+        Cambia el estado del boleto de 'emitido' a 'usado'.
+        
+        Returns:
+            Datos del boleto actualizado con estado 'usado'
+        """
         boleto = self.get_object()
         boleto.marcar_como_usado()
         serializer = self.get_serializer(boleto)

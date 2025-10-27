@@ -302,7 +302,7 @@
                             <form method="post" action="{% url 'set_language' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <input type="hidden" name="language" value="es">
-                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <input type="hidden" name="next" value="/">
                                 <button type="submit" class="dropdown-item">🇪🇸 {% trans "Español" %}</button>
                             </form>
                         </li>
@@ -310,7 +310,7 @@
                             <form method="post" action="{% url 'set_language' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <input type="hidden" name="language" value="en">
-                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <input type="hidden" name="next" value="/en/">
                                 <button type="submit" class="dropdown-item">🇺🇸 {% trans "English" %}</button>
                             </form>
                         </li>
@@ -422,35 +422,35 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <h5><i class="bi bi-airplane-engines"></i> Aerolínea</h5>
-                    <p>Tu compañía aérea de confianza para viajar por el mundo.</p>
+                    <h5><i class="bi bi-airplane-engines"></i> {% trans "Aerolínea" %}</h5>
+                    <p>{% trans "Tu compañía aérea de confianza para viajar por el mundo." %}</p>
                 </div>
                 <div class="col-md-4">
-                    <h5>Enlaces Útiles</h5>
+                    <h5>{% trans "Enlaces Útiles" %}</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'vuelos:lista_vuelos' %}" class="text-light">Vuelos</a></li>
-                        <li><a href="{% url 'vuelos:buscar_vuelos' %}" class="text-light">Buscar Vuelos</a></li>
-                        <li><a href="#" class="text-light">Contacto</a></li>
-                        <li><a href="#" class="text-light">Ayuda</a></li>
+                        <li><a href="{% url 'vuelos:lista_vuelos' %}" class="text-light">{% trans "Vuelos" %}</a></li>
+                        <li><a href="{% url 'vuelos:buscar_vuelos' %}" class="text-light">{% trans "Buscar Vuelos" %}</a></li>
+                        <li><a href="#" class="text-light">{% trans "Contacto" %}</a></li>
+                        <li><a href="#" class="text-light">{% trans "Ayuda" %}</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <h5>Contacto</h5>
+                    <h5>{% trans "Contacto" %}</h5>
                     <ul class="list-unstyled">
                         <li><i class="bi bi-telephone"></i> +54 11 1234-5678</li>
                         <li><i class="bi bi-envelope"></i> info@aerolinea.com</li>
-                        <li><i class="bi bi-geo-alt"></i> Buenos Aires, Argentina</li>
+                        <li><i class="bi bi-geo-alt"></i> {% trans "Buenos Aires, Argentina" %}</li>
                     </ul>
                 </div>
             </div>
             <hr class="my-4">
             <div class="row">
                 <div class="col-md-6">
-                    <p>&copy; 2024 Aerolínea. Todos los derechos reservados.</p>
+                    <p>&copy; 2024 {% trans "Aerolínea" %}. {% trans "Todos los derechos reservados." %}</p>
                 </div>
                 <div class="col-md-6 text-end">
-                    <a href="#" class="text-light me-3">Términos y Condiciones</a>
-                    <a href="#" class="text-light">Política de Privacidad</a>
+                    <a href="#" class="text-light me-3">{% trans "Términos y Condiciones" %}</a>
+                    <a href="#" class="text-light">{% trans "Política de Privacidad" %}</a>
                 </div>
             </div>
         </div>
