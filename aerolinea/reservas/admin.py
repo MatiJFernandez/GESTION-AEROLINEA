@@ -167,7 +167,8 @@ class BoletoAdmin(admin.ModelAdmin):
     
     def get_vuelo(self, obj):
         """Mostrar información del vuelo"""
-        return obj.reserva.vuelo.get_ruta()
+        vuelo = obj.reserva.vuelo
+        return f"{vuelo.origen} → {vuelo.destino}"
     get_vuelo.short_description = 'Vuelo'
     
     def marcar_usado(self, request, queryset):
