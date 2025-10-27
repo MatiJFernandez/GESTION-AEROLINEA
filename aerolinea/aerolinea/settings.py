@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import sentry_sdk
 from dotenv import load_dotenv
+from decouple import config, Csv
 import os
 
 load_dotenv()
@@ -25,12 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--4_1n-@k8^)h9-)du*cn79r!-6fn5#xay!0bx0^u7m)176l&-7'
+# Usa la variable de entorno SECRET_KEY del archivo .env
+SECRET_KEY = config('SECRET_KEY', default='django-insecure--4_1n-@k8^)h9-)du*cn79r!-6fn5#xay!0bx0^u7m)176l&-7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Usa la variable de entorno DEBUG del archivo .env
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+# Hosts permitidos desde variable de entorno
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 
 # Application definition
