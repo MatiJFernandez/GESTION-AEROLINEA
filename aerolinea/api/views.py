@@ -25,7 +25,7 @@ from reservas.models import Reserva, Boleto
 from reservas.serializers import ReservaSerializer, ReservaListSerializer, BoletoSerializer
 
 from usuarios.models import Usuario
-from usuarios.serializers import UsuarioSerializer, UsuarioListSerializer
+from usuarios.serializers import UsuarioSerializer, UsuarioListSerializer, UsuarioCreateSerializer, UsuarioUpdateSerializer
 
 from .permissions import IsAdminOrReadOnly, IsAdminOrEmployee, IsAdmin
 
@@ -289,11 +289,12 @@ class BoletoViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
+class UsuarioViewSet(viewsets.ModelViewSet):
     """
     ViewSet para el modelo Usuario.
     
-    Solo permite leer (listar y recuperar) usuarios.
+    Permite listar, crear, recuperar, actualizar y eliminar usuarios.
+    Solo usuarios admin pueden acceder.
     """
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
@@ -303,4 +304,8 @@ class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
         """Retorna el serializer apropiado según la acción."""
         if self.action == 'list':
             return UsuarioListSerializer
+        elif self.action == 'create':
+            return UsuarioCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return UsuarioUpdateSerializer
         return UsuarioSerializer
