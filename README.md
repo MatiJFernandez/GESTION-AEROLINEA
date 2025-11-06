@@ -52,3 +52,31 @@ Sistema completo de gestión de aerolínea desarrollado en Django con funcionali
    ```bash
    python manage.py runserver
    ```
+
+### Endpoints Principales
+
+#### Vuelos
+- `GET /vuelos/` - Lista de vuelos
+- `GET /vuelos/<id>/` - Detalle de vuelo
+- `GET /vuelos/buscar/` - Búsqueda de vuelos
+
+
+#### Reservas
+- `GET /reservas/` - Lista de reservas
+- `POST /reservas/crear/` - Crear reserva
+- `POST /reservas/<id>/confirmar/` - Confirmar reserva
+- `POST /reservas/<id>/cancelar/` - Cancelar reserva
+- `GET /reservas/<codigo>/` - Buscar por código
+
+#### Usuarios
+- `GET /usuarios/login/` - Página de login
+- `POST /usuarios/login/` - Autenticación
+- `GET /usuarios/registro/` - Página de registro
+- `POST /usuarios/registro/` - Crear usuario
+- `GET /usuarios/perfil/` - Perfil de usuario
+
+#### Administrativo
+- `GET /vuelos/admin/dashboard/` - Dashboard administrativo
+- `GET /vuelos/admin/reportes/pasajeros/` - Reporte de pasajeros
+- `GET /vuelos/admin/estadisticas/ocupacion/` - Estadísticas de ocupación
+- `GET /vuelos/admin/api/estadisticas/` - API de estadísticas

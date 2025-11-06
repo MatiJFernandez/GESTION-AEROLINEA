@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-07 18:30-0300\n"
+"POT-Creation-Date: 2025-10-23 20:18-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,133 +18,186 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
 "1 : 2;\n"
-#: templates/base.html:95
+
+#: aerolinea/email_config.py:42
+msgid "Confirmación de Reserva - Vuelo {}"
+msgstr ""
+
+#: aerolinea/email_config.py:94
+msgid "Recordatorio de Vuelo - {} → {}"
+msgstr ""
+
+#: aerolinea/email_config.py:149
+msgid "Cambio de Estado - Vuelo {}"
+msgstr ""
+
+#: aerolinea/email_config.py:201
+msgid "¡Bienvenido a {}!"
+msgstr ""
+
+#: aerolinea/email_config.py:243
+msgid "Restablecimiento de Contraseña"
+msgstr ""
+
+#: templates/base.html:290 templates/base.html:425 templates/base.html:449
 msgid "Aerolínea"
 msgstr "Aerolínea"
 
-#: templates/base.html:117 templates/test_translation.html:42
+#: templates/base.html:306
+msgid "Español"
+msgstr ""
+
+#: templates/base.html:314
+msgid "English"
+msgstr ""
+
+#: templates/base.html:329 templates/test_translation.html:102
 #: templates/vuelos/home.html:4
 msgid "Inicio"
 msgstr "Inicio"
 
-#: templates/base.html:122
+#: templates/base.html:334 templates/base.html:431
 msgid "Vuelos"
 msgstr "Vuelos"
 
-#: templates/base.html:127
+#: templates/base.html:339
 msgid "Buscar"
 msgstr "Buscar"
 
-#: templates/base.html:133
+#: templates/base.html:345
 msgid "Mi Historial"
 msgstr "Mi Historial"
 
-#: templates/base.html:140
+#: templates/base.html:352
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: templates/base.html:154
+#: templates/base.html:366
 msgid "Mi Perfil"
 msgstr "Mi Perfil"
 
-#: templates/base.html:157
+#: templates/base.html:369
 msgid "Editar Perfil"
 msgstr "Editar Perfil"
 
-#: templates/base.html:161
+#: templates/base.html:373
 msgid "Cerrar Sesión"
 msgstr "Cerrar Sesión"
 
-#: templates/base.html:168
+#: templates/base.html:380
 msgid "Iniciar Sesión"
 msgstr "Iniciar Sesión"
 
-#: templates/base.html:173
+#: templates/base.html:385
 msgid "Registrarse"
 msgstr "Registrarse"
 
-#: templates/test_translation.html:4 templates/test_translation.html:14
-msgid "Test de Traducciones"
-msgstr "Test de Traducciones"
+#: templates/base.html:426
+msgid "Tu compañía aérea de confianza para viajar por el mundo."
+msgstr "Tu compañía aérea de confianza para viajar por el mundo."
 
-#: templates/test_translation.html:21
-msgid "Cambiar Idioma"
-msgstr "Cambiar Idioma"
+#: templates/base.html:429
+msgid "Enlaces Útiles"
+msgstr "Enlaces Útiles"
 
-#: templates/test_translation.html:39
-msgid "Textos Básicos"
-msgstr "Textos Básicos"
-
-#: templates/test_translation.html:45 templates/vuelos/home.html:20
-#: templates/vuelos/home.html:207
+#: templates/base.html:432 templates/test_translation.html:105
+#: templates/vuelos/home.html:20 templates/vuelos/home.html:207
 msgid "Buscar Vuelos"
 msgstr "Buscar Vuelos"
 
-#: templates/test_translation.html:48 templates/vuelos/home.html:23
+#: templates/base.html:433 templates/base.html:438
+msgid "Contacto"
+msgstr "Contacto"
+
+#: templates/base.html:434
+msgid "Ayuda"
+msgstr "Ayuda"
+
+#: templates/base.html:442
+msgid "Buenos Aires, Argentina"
+msgstr "Buenos Aires, Argentina"
+
+#: templates/base.html:449
+msgid "Todos los derechos reservados."
+msgstr "Todos los derechos reservados."
+
+#: templates/base.html:452
+msgid "Términos y Condiciones"
+msgstr "Términos y Condiciones"
+
+#: templates/base.html:453
+msgid "Política de Privacidad"
+msgstr "Política de Privacidad"
+
+#: templates/test_translation.html:7 templates/test_translation.html:69
+msgid "Test de Traducciones"
+msgstr "Test de Traducciones"
+
+#: templates/test_translation.html:73
+msgid "Cambiar Idioma"
+msgstr "Cambiar Idioma"
+
+#: templates/test_translation.html:97
+msgid "Textos Básicos"
+msgstr "Textos Básicos"
+
+#: templates/test_translation.html:108 templates/vuelos/home.html:23
 msgid "Ver Todos los Vuelos"
 msgstr "Ver Todos los Vuelos"
 
-#: templates/test_translation.html:51 templates/vuelos/home.html:43
+#: templates/test_translation.html:117
+msgid "Estadísticas"
+msgstr ""
+
+#: templates/test_translation.html:124 templates/vuelos/home.html:43
 msgid "Vuelos Totales"
 msgstr "Vuelos Totales"
 
-#: templates/test_translation.html:54 templates/vuelos/home.html:52
+#: templates/test_translation.html:130 templates/vuelos/home.html:52
 msgid "Vuelos Activos"
 msgstr "Vuelos Activos"
 
-#: templates/test_translation.html:60
+#: templates/test_translation.html:136
+msgid "Pasajeros Registrados"
+msgstr ""
+
+#: templates/test_translation.html:146
 msgid "Información del Sistema"
 msgstr "Información del Sistema"
 
-#: templates/test_translation.html:63
+#: templates/test_translation.html:151
 msgid "Idioma actual"
 msgstr "Idioma actual"
 
-#: templates/test_translation.html:66
+#: templates/test_translation.html:154
 msgid "Zona horaria"
 msgstr ""
 
-#: templates/test_translation.html:69
+#: templates/test_translation.html:157
 msgid "Fecha actual"
 msgstr ""
 
-#: templates/test_translation.html:72
-msgid "Hora actual"
-msgstr ""
-
-#: templates/test_translation.html:82
-msgid "Textos Complejos"
-msgstr ""
-
-#: templates/test_translation.html:84
-msgid "Descripción del Sistema"
-msgstr ""
-
-#: templates/test_translation.html:85 templates/vuelos/home.html:16
-msgid ""
-"Descubre destinos increíbles con los mejores precios y la mayor comodidad. "
-"Reserva tu vuelo ahora y comienza tu próxima aventura."
-msgstr ""
-
-#: templates/test_translation.html:89
-msgid "Mensaje de Bienvenida"
-msgstr ""
-
-#: templates/test_translation.html:90 templates/vuelos/home.html:13
-msgid "Viaja por el mundo con nosotros"
-msgstr ""
-
-#: templates/test_translation.html:97
+#: templates/test_translation.html:166
 msgid "Volver al Inicio"
 msgstr ""
 
-#: templates/test_translation.html:100
-msgid "Ver Vuelos"
+#: templates/test_translation.html:169
+msgid "Admin"
 msgstr ""
 
 #: templates/vuelos/home.html:4
 msgid "Sistema de Aerolínea"
 msgstr "Sistema de Aerolínea"
+
+#: templates/vuelos/home.html:13
+msgid "Viaja por el mundo con nosotros"
+msgstr ""
+
+#: templates/vuelos/home.html:16
+msgid ""
+"Descubre destinos increíbles con los mejores precios y la mayor comodidad. "
+"Reserva tu vuelo ahora y comienza tu próxima aventura."
+msgstr ""
 
 #: templates/vuelos/home.html:61
 msgid "Aviones"
@@ -241,5 +294,3 @@ msgstr "¿Listo para tu próxima aventura?"
 #: templates/vuelos/home.html:205
 msgid "Reserva tu vuelo ahora y disfruta de las mejores ofertas"
 msgstr "Reserva tu vuelo ahora y disfruta de las mejores ofertas"
-
-

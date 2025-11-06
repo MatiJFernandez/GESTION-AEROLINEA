@@ -121,13 +121,15 @@ def validar_vuelo_antes_guardar(sender, instance, **kwargs):
         instance: Instancia del modelo
         **kwargs: Argumentos adicionales
     """
+    from django.core.exceptions import ValidationError
+    
     # Validaciones adicionales antes de guardar
     if instance.fecha_salida and instance.fecha_llegada:
         if instance.fecha_llegada <= instance.fecha_salida:
-            raise ValueError("La fecha de llegada debe ser posterior a la de salida")
+            raise ValidationError("La fecha de llegada debe ser posterior a la de salida")
     
     if instance.precio_base and instance.precio_base <= 0:
-        raise ValueError("El precio debe ser mayor a 0")
+        raise ValidationError("El precio debe ser mayor a 0")
 
 
 @receiver(post_save, sender=Vuelo)

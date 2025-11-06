@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-07 18:30-0300\n"
+"POT-Creation-Date: 2025-10-23 20:18-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,93 +17,197 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: templates/base.html:95
+
+#: aerolinea/email_config.py:42
+msgid "Confirmación de Reserva - Vuelo {}"
+msgstr ""
+
+#: aerolinea/email_config.py:94
+msgid "Recordatorio de Vuelo - {} → {}"
+msgstr ""
+
+#: aerolinea/email_config.py:149
+msgid "Cambio de Estado - Vuelo {}"
+msgstr ""
+
+#: aerolinea/email_config.py:201
+msgid "¡Bienvenido a {}!"
+msgstr ""
+
+#: aerolinea/email_config.py:243
+msgid "Restablecimiento de Contraseña"
+msgstr ""
+
+#: templates/base.html:290 templates/base.html:425 templates/base.html:449
 msgid "Aerolínea"
 msgstr "Airline"
 
-#: templates/base.html:118
+# Traducciones adicionales
+#: templates/base.html:306
+msgid "Español"
+msgstr "Spanish"
+
+#: templates/base.html:314
+msgid "English"
+msgstr "English"
+
+#: templates/base.html:329 templates/test_translation.html:102
+#: templates/vuelos/home.html:4
 msgid "Inicio"
 msgstr "Home"
 
-#: templates/base.html:123
+#: templates/base.html:334 templates/base.html:431
 msgid "Vuelos"
 msgstr "Flights"
 
-#: templates/base.html:128
+#: templates/base.html:339
 msgid "Buscar"
 msgstr "Search"
 
-#: templates/base.html:135
+#: templates/base.html:345
 msgid "Mi Historial"
 msgstr "My History"
 
-#: templates/base.html:141
+#: templates/base.html:352
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: templates/base.html:152
+#: templates/base.html:366
 msgid "Mi Perfil"
 msgstr "My Profile"
 
-#: templates/base.html:155
+#: templates/base.html:369
 msgid "Editar Perfil"
 msgstr "Edit Profile"
 
-#: templates/base.html:159
+#: templates/base.html:373
 msgid "Cerrar Sesión"
 msgstr "Logout"
 
-#: templates/base.html:167
+#: templates/base.html:380
 msgid "Iniciar Sesión"
 msgstr "Login"
 
-#: templates/base.html:171
+#: templates/base.html:385
 msgid "Registrarse"
 msgstr "Register"
+
+#: templates/base.html:426
+msgid "Tu compañía aérea de confianza para viajar por el mundo."
+msgstr "Your trusted airline for traveling the world."
+
+#: templates/base.html:429
+msgid "Enlaces Útiles"
+msgstr "Useful Links"
+
+#: templates/base.html:432 templates/test_translation.html:105
+#: templates/vuelos/home.html:20 templates/vuelos/home.html:207
+msgid "Buscar Vuelos"
+msgstr "Search Flights"
+
+#: templates/base.html:433 templates/base.html:438
+msgid "Contacto"
+msgstr "Contact"
+
+#: templates/base.html:434
+msgid "Ayuda"
+msgstr "Help"
+
+#: templates/base.html:442
+msgid "Buenos Aires, Argentina"
+msgstr "Buenos Aires, Argentina"
+
+#: templates/base.html:449
+msgid "Todos los derechos reservados."
+msgstr "All rights reserved."
+
+#: templates/base.html:452
+msgid "Términos y Condiciones"
+msgstr "Terms and Conditions"
+
+#: templates/base.html:453
+msgid "Política de Privacidad"
+msgstr "Privacy Policy"
+
+#: templates/test_translation.html:7 templates/test_translation.html:69
+msgid "Test de Traducciones"
+msgstr "Translation Test"
+
+#: templates/test_translation.html:73
+msgid "Cambiar Idioma"
+msgstr "Change Language"
+
+#: templates/test_translation.html:97
+msgid "Textos Básicos"
+msgstr "Basic Texts"
+
+#: templates/test_translation.html:108 templates/vuelos/home.html:23
+msgid "Ver Todos los Vuelos"
+msgstr "View All Flights"
+
+#: templates/test_translation.html:117
+msgid "Estadísticas"
+msgstr "Statistics"
+
+#: templates/test_translation.html:124 templates/vuelos/home.html:43
+msgid "Vuelos Totales"
+msgstr "Total Flights"
+
+#: templates/test_translation.html:130 templates/vuelos/home.html:52
+msgid "Vuelos Activos"
+msgstr "Active Flights"
+
+#: templates/test_translation.html:136
+msgid "Pasajeros Registrados"
+msgstr "Registered Passengers"
+
+#: templates/test_translation.html:146
+msgid "Información del Sistema"
+msgstr ""
+
+#: templates/test_translation.html:151
+#, fuzzy
+#| msgid "Fecha actual"
+msgid "Idioma actual"
+msgstr "Current date"
+
+#: templates/test_translation.html:154
+msgid "Zona horaria"
+msgstr "Time zone"
+
+#: templates/test_translation.html:157
+msgid "Fecha actual"
+msgstr "Current date"
+
+#: templates/test_translation.html:166
+msgid "Volver al Inicio"
+msgstr "Back to Home"
+
+#: templates/test_translation.html:169
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/vuelos/home.html:4
+msgid "Sistema de Aerolínea"
+msgstr "Airline System"
 
 #: templates/vuelos/home.html:13
 msgid "Viaja por el mundo con nosotros"
 msgstr "Travel the world with us"
 
-#: templates/vuelos/home.html:52
-msgid "Buscar Vuelos"
-msgstr "Search Flights"
+#: templates/vuelos/home.html:16
+msgid ""
+"Descubre destinos increíbles con los mejores precios y la mayor comodidad. "
+"Reserva tu vuelo ahora y comienza tu próxima aventura."
+msgstr ""
 
 #: templates/vuelos/home.html:61
-msgid "Vuelos Totales"
-msgstr "Total Flights"
-
-#: templates/vuelos/home.html:70
-msgid "Vuelos Activos"
-msgstr "Active Flights"
-
-#: templates/vuelos/home.html:79
 msgid "Aviones"
 msgstr "Aircraft"
 
-#: templates/vuelos/home.html:88
+#: templates/vuelos/home.html:70
 msgid "Soporte"
 msgstr "Support"
-
-#: templates/test_translation.html:4 templates/test_translation.html:14
-msgid "Test de Traducciones"
-msgstr "Translation Test"
-
-#: templates/test_translation.html:21
-msgid "Cambiar Idioma"
-msgstr "Change Language"
-
-#: templates/test_translation.html:39
-msgid "Textos Básicos"
-msgstr "Basic Texts"
-
-#: templates/vuelos/home.html:23
-msgid "Ver Todos los Vuelos"
-msgstr "View All Flights"
-
-#: templates/vuelos/home.html:4
-msgid "Sistema de Aerolínea"
-msgstr "Airline System"
 
 #: templates/vuelos/home.html:83
 msgid "Vuelos Próximos"
@@ -192,28 +296,3 @@ msgstr "Ready for your next adventure?"
 #: templates/vuelos/home.html:205
 msgid "Reserva tu vuelo ahora y disfruta de las mejores ofertas"
 msgstr "Book your flight now and enjoy the best offers"
-
-# Traducciones adicionales
-msgid "Español"
-msgstr "Spanish"
-
-msgid "English"
-msgstr "English"
-
-msgid "Estadísticas"
-msgstr "Statistics"
-
-msgid "Pasajeros Registrados"
-msgstr "Registered Passengers"
-
-msgid "Zona horaria"
-msgstr "Time zone"
-
-msgid "Fecha actual"
-msgstr "Current date"
-
-msgid "Volver al Inicio"
-msgstr "Back to Home"
-
-msgid "Admin"
-msgstr "Admin"

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import sentry_sdk
 from dotenv import load_dotenv
+from decouple import config, Csv
 import os
 
 load_dotenv()
@@ -25,12 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--4_1n-@k8^)h9-)du*cn79r!-6fn5#xay!0bx0^u7m)176l&-7'
+# Usa la variable de entorno SECRET_KEY del archivo .env
+SECRET_KEY = config('SECRET_KEY', default='django-insecure--4_1n-@k8^)h9-)du*cn79r!-6fn5#xay!0bx0^u7m)176l&-7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Usa la variable de entorno DEBUG del archivo .env
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+# Hosts permitidos desde variable de entorno
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 
 # Application definition
@@ -44,11 +48,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',     # Framework de mensajes
     'django.contrib.staticfiles',  # Manejo de archivos estáticos
     
+    # Django REST Framework
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'drf_yasg',
+    
     # Aplicaciones del proyecto (creadas por nosotros)
     'usuarios',    # Gestión de usuarios y perfiles
     'vuelos',      # Gestión de vuelos y rutas
     'pasajeros',   # Gestión de pasajeros
     'reservas',    # Sistema de reservas
+    'api',         # API REST
 ]
 
 MIDDLEWARE = [
@@ -230,4 +240,85 @@ LOGGING = {
         'level': 'INFO',
         'handlers': ['console'],
     },
+}
+
+# Configuración de Django REST Framework
+REST_FRAMEWORK = {
+    # Autenticación por defecto
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    
+    # Permisos por defecto
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    
+    # Paginación
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    
+    # Renderización de respuestas
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    
+    # Parsers para datos entrantes
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+    
+    # Manejo de excepciones
+    'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler',
+    
+    # Formato de fecha y hora
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATE_FORMAT': '%Y-%m-%d',
+    'TIME_FORMAT': '%H:%M:%S',
+}
+
+# Configuración de JWT
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    
+    'JTI_CLAIM': 'jti',
+}
+
+# Configuración de Swagger
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': True,
+    'LOGIN_URL': '/admin/login/',
+    'LOGOUT_URL': '/admin/logout/',
 }

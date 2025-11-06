@@ -21,11 +21,37 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import set_language
 
+# Swagger
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Sistema de Aerolínea API",
+      default_version='v1',
+      description="API REST para el sistema de gestión de aerolínea",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@aerolinea.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
 
 # URLs principales del proyecto
 urlpatterns = [
     # Panel de administración de Django
     path('admin/', admin.site.urls),
+    
+    # Swagger documentation
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('swagger.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    
+    # API REST
+    path('api/', include('api.urls')),
 ]
 
 # URL para cambiar idioma (fuera de i18n_patterns para que funcione)
@@ -40,7 +66,7 @@ urlpatterns += i18n_patterns(
     path('usuarios/', include('usuarios.urls')), # Gestión de usuarios y autenticación
     path('pasajeros/', include('pasajeros.urls')), # Gestión de pasajeros
     path('reservas/', include('reservas.urls')), # Sistema de reservas
-    prefix_default_language=False,
+    prefix_default_language=True,
 )
 
 
